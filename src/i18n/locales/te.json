@@ -1,0 +1,89 @@
+{
+  "common": {
+    "login": "లాగిన్",
+    "logout": "లాగౌట్",
+    "submit": "సమర్పించు",
+    "cancel": "రద్దు చేయి",
+    "save": "సేవ్ చేయి",
+    "delete": "తొలగించు",
+    "edit": "సవరించు",
+    "add": "జోడించు",
+    "search": "వెతకండి",
+    "loading": "లోడవుతోంది...",
+    "error": "లోపం",
+    "success": "విజయవంతం",
+    "welcome": "స్వాగతం"
+  },
+  "auth": {
+    "loginTitle": "QR రిటైల్‌లో లాగిన్ చేయండి",
+    "adminLogin": "అడ్మిన్ లాగిన్",
+    "customerLogin": "కస్టమర్ లాగిన్",
+    "employeeId": "ఉద్యోగి ID",
+    "password": "పాస్‌వర్డ్",
+    "phoneNumber": "ఫోన్ నంబర్",
+    "otp": "OTP",
+    "sendOtp": "OTP పంపండి",
+    "verifyOtp": "OTP ధృవీకరించండి",
+    "loginError": "లాగిన్ విఫలమైంది. మీ వివరాలను తనిఖీ చేయండి.",
+    "otpSent": "మీ ఫోన్‌కు OTP పంపబడింది",
+    "invalidOtp": "చెల్లని OTP"
+  },
+  "admin": {
+    "dashboard": "అడ్మిన్ డాష్‌బోర్డ్",
+    "inventory": "ఇన్వెంటరీ నిర్వహణ",
+    "qrCodes": "QR కోడ్ జనరేషన్",
+    "offers": "ఆఫర్ సెటప్",
+    "analytics": "అనలిటిక్స్",
+    "totalProducts": "మొత్తం ఉత్పత్తులు",
+    "lowStockAlerts": "తక్కువ స్టాక్ హెచ్చరికలు",
+    "slowMovingStock": "నెమ్మదిగా కదులుతున్న స్టాక్",
+    "upcomingBatches": "రాబోయే బ్యాచులు",
+    "addProduct": "ఉత్పత్తి జోడించండి",
+    "editProduct": "ఉత్పత్తిని సవరించండి",
+    "generateQR": "QR కోడ్ జనరేట్ చేయండి",
+    "downloadQR": "QR డౌన్‌లోడ్",
+    "createOffer": "ఆఫర్ సృష్టించండి"
+  },
+  "customer": {
+    "scanQR": "QR కోడ్ స్కాన్ చేయండి",
+    "productSearch": "ఉత్పత్తి వెతకండి",
+    "storeMap": "స్టోర్ మ్యాప్",
+    "virtualCart": "వర్చువల్ కార్ట్",
+    "reviews": "సమీక్షలు",
+    "addToCart": "కార్ట్‌లో జోడించండి",
+    "checkout": "చెక్అవుట్",
+    "budget": "బడ్జెట్",
+    "loyalty": "లాయల్టీ పాయింట్లు",
+    "navigation": "నావిగేషన్",
+    "takeMeThere": "నన్ను అక్కడకు తీసుకెళ్ళండి"
+  },
+  "product": {
+    "name": "ఉత్పత్తి పేరు",
+    "category": "వర్గం",
+    "price": "ధర",
+    "mrp": "MRP",
+    "discount": "తగ్గింపు",
+    "stock": "స్టాక్",
+    "location": "స్థానం",
+    "batch": "బ్యాచ్ నంబర్",
+    "expiry": "గడువు తేదీ",
+    "ecoFriendly": "పర్యావరణ అనుకూలం",
+    "onPromotion": "ప్రమోషన్‌లో"
+  },
+  "navigation": {
+    "home": "హోమ్",
+    "products": "ఉత్పత్తులు",
+    "cart": "కార్ట్",
+    "profile": "ప్రొఫైల్",
+    "settings": "సెట్టింగ్లు",
+    "help": "సహాయం"
+  },
+  "messages": {
+    "productAdded": "ఉత్పత్తి విజయవంతంగా జోడించబడింది",
+    "productUpdated": "ఉత్పత్తి విజయవంతంగా నవీకరించబడింది",
+    "productDeleted": "ఉత్పత్తి విజయవంతంగా తొలగించబడింది",
+    "qrGenerated": "QR కోడ్ విజయవంతంగా జనరేట్ చేయబడింది",
+    "cartUpdated": "కార్ట్ నవీకరించబడింది",
+    "budgetAlert": "బడ్జెట్ హెచ్చరిక: {{amount}} లో {{percentage}}% చేరుకుంది"
+  }
+}

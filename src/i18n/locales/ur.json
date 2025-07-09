@@ -1,0 +1,89 @@
+{
+  "common": {
+    "login": "لاگ ان",
+    "logout": "لاگ آؤٹ",
+    "submit": "جمع کریں",
+    "cancel": "منسوخ کریں",
+    "save": "محفوظ کریں",
+    "delete": "ڈیلیٹ کریں",
+    "edit": "ترمیم کریں",
+    "add": "شامل کریں",
+    "search": "تلاش کریں",
+    "loading": "لوڈ ہو رہا ہے...",
+    "error": "خرابی",
+    "success": "کامیابی",
+    "welcome": "خوش آمدید"
+  },
+  "auth": {
+    "loginTitle": "QR ریٹیل میں لاگ ان کریں",
+    "adminLogin": "ایڈمن لاگ ان",
+    "customerLogin": "کسٹمر لاگ ان",
+    "employeeId": "ملازم ID",
+    "password": "پاس ورڈ",
+    "phoneNumber": "فون نمبر",
+    "otp": "OTP",
+    "sendOtp": "OTP بھیجیں",
+    "verifyOtp": "OTP کی تصدیق کریں",
+    "loginError": "لاگ ان ناکام۔ اپنی تفصیلات چیک کریں۔",
+    "otpSent": "آپ کے فون پر OTP بھیجا گیا ہے",
+    "invalidOtp": "غلط OTP"
+  },
+  "admin": {
+    "dashboard": "ایڈمن ڈیش بورڈ",
+    "inventory": "انوینٹری منیجمنٹ",
+    "qrCodes": "QR کوڈ بنانا",
+    "offers": "آفر سیٹ اپ",
+    "analytics": "تجزیات",
+    "totalProducts": "کل پروڈکٹس",
+    "lowStockAlerts": "کم اسٹاک الرٹس",
+    "slowMovingStock": "آہستہ فروخت ہونے والا اسٹاک",
+    "upcomingBatches": "آنے والے بیچز",
+    "addProduct": "پروڈکٹ شامل کریں",
+    "editProduct": "پروڈکٹ میں ترمیم کریں",
+    "generateQR": "QR کوڈ بنائیں",
+    "downloadQR": "QR ڈاؤن لوڈ کریں",
+    "createOffer": "آفر بنائیں"
+  },
+  "customer": {
+    "scanQR": "QR کوڈ سکین کریں",
+    "productSearch": "پروڈکٹ تلاش کریں",
+    "storeMap": "اسٹور میپ",
+    "virtualCart": "ورچوئل کارٹ",
+    "reviews": "جائزے",
+    "addToCart": "کارٹ میں شامل کریں",
+    "checkout": "چیک آؤٹ",
+    "budget": "بجٹ",
+    "loyalty": "لائلٹی پوائنٹس",
+    "navigation": "نیویگیشن",
+    "takeMeThere": "مجھے وہاں لے چلیں"
+  },
+  "product": {
+    "name": "پروڈکٹ کا نام",
+    "category": "کیٹگری",
+    "price": "قیمت",
+    "mrp": "MRP",
+    "discount": "ڈسکاؤنٹ",
+    "stock": "اسٹاک",
+    "location": "مقام",
+    "batch": "بیچ نمبر",
+    "expiry": "میعاد ختم ہونے کی تاریخ",
+    "ecoFriendly": "ماحول دوست",
+    "onPromotion": "پروموشن میں"
+  },
+  "navigation": {
+    "home": "ہوم",
+    "products": "پروڈکٹس",
+    "cart": "کارٹ",
+    "profile": "پروفائل",
+    "settings": "سیٹنگز",
+    "help": "مدد"
+  },
+  "messages": {
+    "productAdded": "پروڈکٹ کامیابی سے شامل کیا گیا",
+    "productUpdated": "پروڈکٹ کامیابی سے اپڈیٹ کیا گیا",
+    "productDeleted": "پروڈکٹ کامیابی سے ڈیلیٹ کیا گیا",
+    "qrGenerated": "QR کوڈ کامیابی سے بنایا گیا",
+    "cartUpdated": "کارٹ اپڈیٹ کیا گیا",
+    "budgetAlert": "بجٹ الرٹ: {{amount}} کا {{percentage}}% پہنچ گیا"
+  }
+}

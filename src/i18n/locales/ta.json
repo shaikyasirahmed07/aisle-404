@@ -1,0 +1,89 @@
+{
+  "common": {
+    "login": "உள்நுழைவு",
+    "logout": "வெளியேறு",
+    "submit": "சமர்ப்பிக்க",
+    "cancel": "ரத்து செய்",
+    "save": "சேமிக்க",
+    "delete": "நீக்க",
+    "edit": "திருத்த",
+    "add": "சேர்க்க",
+    "search": "தேடு",
+    "loading": "ஏற்றுகிறது...",
+    "error": "பிழை",
+    "success": "வெற்றி",
+    "welcome": "வரவேற்கிறோம்"
+  },
+  "auth": {
+    "loginTitle": "QR ரிட்டேலில் உள்நுழையவும்",
+    "adminLogin": "நிர்வாகி உள்நுழைவு",
+    "customerLogin": "வாடிக்கையாளர் உள்நுழைவு",
+    "employeeId": "பணியாளர் ID",
+    "password": "கடவுச்சொல்",
+    "phoneNumber": "தொலைபேசி எண்",
+    "otp": "OTP",
+    "sendOtp": "OTP அனுப்பு",
+    "verifyOtp": "OTP சரிபார்க்க",
+    "loginError": "உள்நுழைவு தோல்வி. உங்கள் விவரங்களைச் சரிபார்க்கவும்.",
+    "otpSent": "உங்கள் தொலைபேசிக்கு OTP அனுப்பப்பட்டுள்ளது",
+    "invalidOtp": "தவறான OTP"
+  },
+  "admin": {
+    "dashboard": "நிர்வாக டாஷ்போர்டு",
+    "inventory": "இன்வென்டரி நிர்வாகம்",
+    "qrCodes": "QR கோடு உருவாக்கம்",
+    "offers": "சலுகை அமைப்பு",
+    "analytics": "பகுப்பாய்வு",
+    "totalProducts": "மொத்த தயாரிப்புகள்",
+    "lowStockAlerts": "குறைந்த ஸ்டாக் எச்சரிக்கைகள்",
+    "slowMovingStock": "மெதுவாக விற்பனையாகும் ஸ்டாக்",
+    "upcomingBatches": "வரவிருக்கும் தொகுதிகள்",
+    "addProduct": "தயாரிப்பு சேர்க்க",
+    "editProduct": "தயாரிப்பு திருத்த",
+    "generateQR": "QR கோடு உருவாக்க",
+    "downloadQR": "QR பதிவிறக்க",
+    "createOffer": "சலுகை உருவாக்க"
+  },
+  "customer": {
+    "scanQR": "QR கோடு ஸ்கேன்",
+    "productSearch": "தயாரிப்பு தேடல்",
+    "storeMap": "கடை வரைபடம்",
+    "virtualCart": "மெய்நிகர் கார்ட்",
+    "reviews": "மதிப்பீடுகள்",
+    "addToCart": "கார்ட்டில் சேர்க்க",
+    "checkout": "செக்அவுட்",
+    "budget": "பட்ஜெட்",
+    "loyalty": "லாயல்டி புள்ளிகள்",
+    "navigation": "வழிசெலுத்தல்",
+    "takeMeThere": "என்னை அங்கே அழைத்துச் செல்லுங்கள்"
+  },
+  "product": {
+    "name": "தயாரிப்பு பெயர்",
+    "category": "வகை",
+    "price": "விலை",
+    "mrp": "MRP",
+    "discount": "தள்ளுபடி",
+    "stock": "ஸ்டாக்",
+    "location": "இடம்",
+    "batch": "தொகுதி எண்",
+    "expiry": "காலாவதி தேதி",
+    "ecoFriendly": "சுற்றுச்சூழல் நட்பு",
+    "onPromotion": "பிரமோஷனில்"
+  },
+  "navigation": {
+    "home": "முகப்பு",
+    "products": "தயாரிப்புகள்",
+    "cart": "கார்ட்",
+    "profile": "சுயவிவரம்",
+    "settings": "அமைப்புகள்",
+    "help": "உதவி"
+  },
+  "messages": {
+    "productAdded": "தயாரிப்பு வெற்றிகரமாக சேர்க்கப்பட்டது",
+    "productUpdated": "தயாரிப்பு வெற்றிகரமாக புதுப்பிக்கப்பட்டது",
+    "productDeleted": "தயாரிப்பு வெற்றிகரமாக நீக்கப்பட்டது",
+    "qrGenerated": "QR கோடு வெற்றிகரமாக உருவாக்கப்பட்டது",
+    "cartUpdated": "கார்ட் புதுப்பிக்கப்பட்டது",
+    "budgetAlert": "பட்ஜெட் எச்சரிக்கை: {{amount}} இல் {{percentage}}% அடைந்தது"
+  }
+}

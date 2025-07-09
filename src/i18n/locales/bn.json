@@ -1,0 +1,89 @@
+{
+  "common": {
+    "login": "লগইন",
+    "logout": "লগআউট",
+    "submit": "জমা দিন",
+    "cancel": "বাতিল",
+    "save": "সংরক্ষণ করুন",
+    "delete": "মুছুন",
+    "edit": "সম্পাদনা করুন",
+    "add": "যোগ করুন",
+    "search": "অনুসন্ধান করুন",
+    "loading": "লোড হচ্ছে...",
+    "error": "ত্রুটি",
+    "success": "সফল",
+    "welcome": "স্বাগতম"
+  },
+  "auth": {
+    "loginTitle": "QR রিটেইলে লগইন করুন",
+    "adminLogin": "অ্যাডমিন লগইন",
+    "customerLogin": "কাস্টমার লগইন",
+    "employeeId": "কর্মচারী আইডি",
+    "password": "পাসওয়ার্ড",
+    "phoneNumber": "ফোন নাম্বার",
+    "otp": "OTP",
+    "sendOtp": "OTP পাঠান",
+    "verifyOtp": "OTP যাচাই করুন",
+    "loginError": "লগইন ব্যর্থ। আপনার বিস্তারিত তথ্য চেক করুন।",
+    "otpSent": "আপনার ফোনে OTP পাঠানো হয়েছে",
+    "invalidOtp": "ভুল OTP"
+  },
+  "admin": {
+    "dashboard": "অ্যাডমিন ড্যাশবোর্ড",
+    "inventory": "ইনভেন্টরি ব্যবস্থাপনা",
+    "qrCodes": "QR কোড তৈরি",
+    "offers": "অফার সেটআপ",
+    "analytics": "বিশ্লেষণ",
+    "totalProducts": "মোট পণ্য",
+    "lowStockAlerts": "কম স্টক সতর্কতা",
+    "slowMovingStock": "ধীরে বিক্রি হওয়া স্টক",
+    "upcomingBatches": "আগামী ব্যাচ",
+    "addProduct": "পণ্য যোগ করুন",
+    "editProduct": "পণ্য সম্পাদনা করুন",
+    "generateQR": "QR কোড তৈরি করুন",
+    "downloadQR": "QR ডাউনলোড করুন",
+    "createOffer": "অফার তৈরি করুন"
+  },
+  "customer": {
+    "scanQR": "QR কোড স্ক্যান করুন",
+    "productSearch": "পণ্য অনুসন্ধান",
+    "storeMap": "স্টোর মানচিত্র",
+    "virtualCart": "ভার্চুয়াল কার্ট",
+    "reviews": "পর্যালোচনা",
+    "addToCart": "কার্টে যোগ করুন",
+    "checkout": "চেকআউট",
+    "budget": "বাজেট",
+    "loyalty": "লয়্যালটি পয়েন্ট",
+    "navigation": "নেভিগেশন",
+    "takeMeThere": "আমাকে সেখানে নিয়ে যান"
+  },
+  "product": {
+    "name": "পণ্যের নাম",
+    "category": "বিভাগ",
+    "price": "মূল্য",
+    "mrp": "MRP",
+    "discount": "ছাড়",
+    "stock": "স্টক",
+    "location": "অবস্থান",
+    "batch": "ব্যাচ নাম্বার",
+    "expiry": "মেয়াদ উত্তীর্ণের তারিখ",
+    "ecoFriendly": "পরিবেশ বান্ধব",
+    "onPromotion": "প্রোমোশনে"
+  },
+  "navigation": {
+    "home": "হোম",
+    "products": "পণ্যসমূহ",
+    "cart": "কার্ট",
+    "profile": "প্রোফাইল",
+    "settings": "সেটিংস",
+    "help": "সাহায্য"
+  },
+  "messages": {
+    "productAdded": "পণ্য সফলভাবে যোগ করা হয়েছে",
+    "productUpdated": "পণ্য সফলভাবে আপডেট করা হয়েছে",
+    "productDeleted": "পণ্য সফলভাবে মুছে ফেলা হয়েছে",
+    "qrGenerated": "QR কোড সফলভাবে তৈরি হয়েছে",
+    "cartUpdated": "কার্ট আপডেট করা হয়েছে",
+    "budgetAlert": "বাজেট সতর্কতা: {{amount}} এর {{percentage}}% পৌঁছেছে"
+  }
+}

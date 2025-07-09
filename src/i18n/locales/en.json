@@ -1,0 +1,89 @@
+{
+  "common": {
+    "login": "Login",
+    "logout": "Logout",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "search": "Search",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "welcome": "Welcome"
+  },
+  "auth": {
+    "loginTitle": "Login to QR Retail",
+    "adminLogin": "Admin Login",
+    "customerLogin": "Customer Login",
+    "employeeId": "Employee ID",
+    "password": "Password",
+    "phoneNumber": "Phone Number",
+    "otp": "OTP",
+    "sendOtp": "Send OTP",
+    "verifyOtp": "Verify OTP",
+    "loginError": "Login failed. Please check your credentials.",
+    "otpSent": "OTP sent to your phone",
+    "invalidOtp": "Invalid OTP"
+  },
+  "admin": {
+    "dashboard": "Admin Dashboard",
+    "inventory": "Inventory Management",
+    "qrCodes": "QR Code Generation",
+    "offers": "Offer Setup",
+    "analytics": "Analytics",
+    "totalProducts": "Total Products",
+    "lowStockAlerts": "Low Stock Alerts",
+    "slowMovingStock": "Slow Moving Stock",
+    "upcomingBatches": "Upcoming Batches",
+    "addProduct": "Add Product",
+    "editProduct": "Edit Product",
+    "generateQR": "Generate QR Code",
+    "downloadQR": "Download QR",
+    "createOffer": "Create Offer"
+  },
+  "customer": {
+    "scanQR": "Scan QR Code",
+    "productSearch": "Product Search",
+    "storeMap": "Store Map",
+    "virtualCart": "Virtual Cart",
+    "reviews": "Reviews",
+    "addToCart": "Add to Cart",
+    "checkout": "Checkout",
+    "budget": "Budget",
+    "loyalty": "Loyalty Points",
+    "navigation": "Navigation",
+    "takeMeThere": "Take Me There"
+  },
+  "product": {
+    "name": "Product Name",
+    "category": "Category",
+    "price": "Price",
+    "mrp": "MRP",
+    "discount": "Discount",
+    "stock": "Stock",
+    "location": "Location",
+    "batch": "Batch Number",
+    "expiry": "Expiry Date",
+    "ecoFriendly": "Eco-Friendly",
+    "onPromotion": "On Promotion"
+  },
+  "navigation": {
+    "home": "Home",
+    "products": "Products",
+    "cart": "Cart",
+    "profile": "Profile",
+    "settings": "Settings",
+    "help": "Help"
+  },
+  "messages": {
+    "productAdded": "Product added successfully",
+    "productUpdated": "Product updated successfully",
+    "productDeleted": "Product deleted successfully",
+    "qrGenerated": "QR code generated successfully",
+    "cartUpdated": "Cart updated",
+    "budgetAlert": "Budget alert: {{percentage}}% of {{amount}} reached"
+  }
+}

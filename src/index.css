@@ -15,17 +15,17 @@
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
 
-    /* Primary - Modern Blue */
-    --primary: 217 91% 60%;
+    /* Primary - Walmart Blue */
+    --primary: 208 100% 39%;
     --primary-foreground: 0 0% 98%;
-    --primary-hover: 217 91% 55%;
-    --primary-light: 217 91% 90%;
+    --primary-hover: 208 100% 34%;
+    --primary-light: 208 100% 92%;
 
-    /* Secondary - Warm Orange */
-    --secondary: 25 95% 53%;
-    --secondary-foreground: 0 0% 98%;
-    --secondary-hover: 25 95% 48%;
-    --secondary-light: 25 95% 90%;
+    /* Secondary - Walmart Yellow */
+    --secondary: 44 100% 55%;
+    --secondary-foreground: 208 100% 20%;
+    --secondary-hover: 44 100% 50%;
+    --secondary-light: 44 100% 95%;
 
     --muted: 240 4.8% 95.9%;
     --muted-foreground: 240 3.8% 46.1%;
@@ -56,7 +56,9 @@
     --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-hover)));
     --gradient-secondary: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--secondary-hover)));
     --gradient-hero: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 100%);
-    --gradient-card: linear-gradient(145deg, hsl(0 0% 100% / 0.8), hsl(0 0% 100% / 0.4));
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 100% / 0.95), hsl(208 100% 98% / 0.8));
+    --gradient-mobile-bg: linear-gradient(180deg, hsl(208 100% 98%) 0%, hsl(0 0% 100%) 100%);
+    --gradient-walmart-subtle: linear-gradient(135deg, hsl(208 100% 96%) 0%, hsl(44 100% 98%) 100%);
 
     /* Shadows */
     --shadow-soft: 0 2px 10px hsl(var(--primary) / 0.1);
@@ -78,15 +80,15 @@
     --popover: 240 10% 3.9%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 217 91% 60%;
-    --primary-foreground: 240 10% 3.9%;
-    --primary-hover: 217 91% 65%;
-    --primary-light: 217 91% 20%;
+    --primary: 208 100% 39%;
+    --primary-foreground: 0 0% 98%;
+    --primary-hover: 208 100% 34%;
+    --primary-light: 208 100% 25%;
 
-    --secondary: 25 95% 53%;
-    --secondary-foreground: 240 10% 3.9%;
-    --secondary-hover: 25 95% 58%;
-    --secondary-light: 25 95% 20%;
+    --secondary: 44 100% 55%;
+    --secondary-foreground: 208 100% 20%;
+    --secondary-hover: 44 100% 50%;
+    --secondary-light: 44 100% 25%;
 
     --muted: 240 3.7% 15.9%;
     --muted-foreground: 240 5% 64.9%;
@@ -110,7 +112,9 @@
     --ring: 217 91% 60%;
 
     --gradient-hero: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 100%);
-    --gradient-card: linear-gradient(145deg, hsl(240 10% 6% / 0.8), hsl(240 10% 8% / 0.4));
+    --gradient-card: linear-gradient(145deg, hsl(240 10% 6% / 0.95), hsl(240 10% 8% / 0.8));
+    --gradient-mobile-bg: linear-gradient(180deg, hsl(240 10% 4%) 0%, hsl(240 10% 6%) 100%);
+    --gradient-walmart-subtle: linear-gradient(135deg, hsl(208 100% 15%) 0%, hsl(44 100% 20%) 100%);
   }
 }
 
@@ -187,6 +191,31 @@
 
   .hover-lift {
     @apply transition-transform duration-300 hover:-translate-y-1 hover:shadow-medium;
+  }
+
+  /* Mobile-first classes */
+  .mobile-container {
+    @apply px-4 py-2 max-w-md mx-auto;
+  }
+
+  .mobile-card {
+    @apply bg-gradient-card rounded-2xl shadow-soft border border-border/30 p-4 mb-4;
+  }
+
+  .mobile-button {
+    @apply w-full py-3 px-4 rounded-xl font-medium transition-all duration-300 text-center;
+  }
+
+  .touch-target {
+    @apply min-h-[44px] min-w-[44px] flex items-center justify-center;
+  }
+
+  .gradient-bg {
+    @apply bg-gradient-mobile-bg;
+  }
+
+  .walmart-gradient {
+    @apply bg-gradient-walmart-subtle;
   }
 }
 

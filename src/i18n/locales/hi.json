@@ -1,0 +1,89 @@
+{
+  "common": {
+    "login": "लॉगिन",
+    "logout": "लॉगआउट",
+    "submit": "सबमिट",
+    "cancel": "रद्द करें",
+    "save": "सेव करें",
+    "delete": "हटाएं",
+    "edit": "संपादित करें",
+    "add": "जोड़ें",
+    "search": "खोजें",
+    "loading": "लोड हो रहा है...",
+    "error": "त्रुटि",
+    "success": "सफलता",
+    "welcome": "स्वागत"
+  },
+  "auth": {
+    "loginTitle": "QR रिटेल में लॉगिन करें",
+    "adminLogin": "एडमिन लॉगिन",
+    "customerLogin": "ग्राहक लॉगिन",
+    "employeeId": "कर्मचारी आईडी",
+    "password": "पासवर्ड",
+    "phoneNumber": "फोन नंबर",
+    "otp": "OTP",
+    "sendOtp": "OTP भेजें",
+    "verifyOtp": "OTP सत्यापित करें",
+    "loginError": "लॉगिन विफल। कृपया अपनी जानकारी जांचें।",
+    "otpSent": "आपके फोन पर OTP भेजा गया",
+    "invalidOtp": "गलत OTP"
+  },
+  "admin": {
+    "dashboard": "एडमिन डैशबोर्ड",
+    "inventory": "इन्वेंटरी प्रबंधन",
+    "qrCodes": "QR कोड जेनरेशन",
+    "offers": "ऑफर सेटअप",
+    "analytics": "एनालिटिक्स",
+    "totalProducts": "कुल उत्पाद",
+    "lowStockAlerts": "कम स्टॉक अलर्ट",
+    "slowMovingStock": "धीमी गति से बिकने वाला स्टॉक",
+    "upcomingBatches": "आने वाले बैच",
+    "addProduct": "उत्पाद जोड़ें",
+    "editProduct": "उत्पाद संपादित करें",
+    "generateQR": "QR कोड जेनरेट करें",
+    "downloadQR": "QR डाउनलोड करें",
+    "createOffer": "ऑफर बनाएं"
+  },
+  "customer": {
+    "scanQR": "QR कोड स्कैन करें",
+    "productSearch": "उत्पाद खोजें",
+    "storeMap": "स्टोर मैप",
+    "virtualCart": "वर्चुअल कार्ट",
+    "reviews": "समीक्षा",
+    "addToCart": "कार्ट में जोड़ें",
+    "checkout": "चेकआउट",
+    "budget": "बजट",
+    "loyalty": "लॉयल्टी पॉइंट्स",
+    "navigation": "नेवीगेशन",
+    "takeMeThere": "मुझे वहां ले चलें"
+  },
+  "product": {
+    "name": "उत्पाद का नाम",
+    "category": "श्रेणी",
+    "price": "मूल्य",
+    "mrp": "MRP",
+    "discount": "छूट",
+    "stock": "स्टॉक",
+    "location": "स्थान",
+    "batch": "बैच नंबर",
+    "expiry": "समाप्ति तिथि",
+    "ecoFriendly": "पर्यावरण-अनुकूल",
+    "onPromotion": "प्रमोशन पर"
+  },
+  "navigation": {
+    "home": "होम",
+    "products": "उत्पाद",
+    "cart": "कार्ट",
+    "profile": "प्रोफाइल",
+    "settings": "सेटिंग्स",
+    "help": "सहायता"
+  },
+  "messages": {
+    "productAdded": "उत्पाद सफलतापूर्वक जोड़ा गया",
+    "productUpdated": "उत्पाद सफलतापूर्वक अपडेट किया गया",
+    "productDeleted": "उत्पाद सफलतापूर्वक हटाया गया",
+    "qrGenerated": "QR कोड सफलतापूर्वक जेनरेट किया गया",
+    "cartUpdated": "कार्ट अपडेट किया गया",
+    "budgetAlert": "बजट अलर्ट: {{amount}} का {{percentage}}% पहुंच गया"
+  }
+}
