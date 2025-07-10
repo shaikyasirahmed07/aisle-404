@@ -67,7 +67,7 @@ const AnalyticsDashboard = () => {
         <h3 className="text-2xl font-bold text-foreground">Analytics Dashboard</h3>
         <p className="text-muted-foreground">Track performance and gain insights into your store operations</p>
       </div>
-
+{/* djj  */}
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <MetricCard
