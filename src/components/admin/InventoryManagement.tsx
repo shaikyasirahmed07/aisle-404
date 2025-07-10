@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,40 +7,55 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Plus, Edit, Trash, Search, Package, AlertTriangle } from 'lucide-react';
-import { mockProducts, Product } from '@/data/mockData';
+import { Plus, Edit, Trash, Search, Package, AlertTriangle, QrCode } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
+import { SupabaseProduct } from '@/types/supabase';
 
 const InventoryManagement = () => {
-  const [products, setProducts] = useState<Product[]>(mockProducts);
+  const [products, setProducts] = useState<SupabaseProduct[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-
+  const [isLoading, setIsLoading] = useState(true);
   const [newProduct, setNewProduct] = useState({
     name: '',
-    batchNumber: '',
-    expiryDate: '',
-    aisleLocation: '',
-    mrp: '',
-    price: '',
     category: '',
-    stock: '',
-    description: ''
+    price: '',
+    mrp: '',
+    stockCount: '',
+    aisleLocation: '',
+    batchNumber: '',
+    expiryDate: ''
   });
 
-  const categories = [...new Set(products.map(p => p.category))];
+  useEffect(() => {
+    fetchProducts();
+  }, []);
 
-  const filteredProducts = products.filter(product => {
-    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         product.batchNumber.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = categoryFilter === 'all' || product.category === categoryFilter;
-    return matchesSearch && matchesCategory;
-  });
+  const fetchProducts = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .order('name');
 
-  const handleAddProduct = () => {
-    if (!newProduct.name || !newProduct.mrp || !newProduct.price) {
+      if (error) throw error;
+      setProducts(data || []);
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load products",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleAddProduct = async () => {
+    if (!newProduct.name || !newProduct.price || !newProduct.stockCount) {
       toast({
         title: "Validation Error",
         description: "Please fill in all required fields",
@@ -49,295 +64,324 @@ const InventoryManagement = () => {
       return;
     }
 
-    const product: Product = {
-      id: `P${String(products.length + 1).padStart(3, '0')}`,
-      name: newProduct.name,
-      batchNumber: newProduct.batchNumber || `BT${Date.now()}`,
-      expiryDate: newProduct.expiryDate,
-      aisleLocation: newProduct.aisleLocation,
-      mrp: parseFloat(newProduct.mrp),
-      price: parseFloat(newProduct.price),
-      discount: Math.round(((parseFloat(newProduct.mrp) - parseFloat(newProduct.price)) / parseFloat(newProduct.mrp)) * 100),
-      category: newProduct.category,
-      stock: parseInt(newProduct.stock) || 0,
-      qrCode: `QR_${newProduct.batchNumber || `BT${Date.now()}`}`,
-      description: newProduct.description,
-      reviews: [],
-      averageRating: 0,
-      salesVelocity: 'medium',
-      isNearExpiry: false
-    };
+    try {
+      const productId = `P${String(products.length + 1).padStart(3, '0')}`;
+      const productData = {
+        productid: productId,
+        name: newProduct.name,
+        batchnumber: newProduct.batchNumber || `BT${Date.now()}`,
+        expirydate: newProduct.expiryDate || null,
+        location: newProduct.aisleLocation,
+        mrp: parseFloat(newProduct.mrp) || parseFloat(newProduct.price),
+        price: parseFloat(newProduct.price),
+        discount: newProduct.mrp ? Math.round(((parseFloat(newProduct.mrp) - parseFloat(newProduct.price)) / parseFloat(newProduct.mrp)) * 100) : 0,
+        category: newProduct.category,
+        stockcount: parseInt(newProduct.stockCount),
+        qrlink: `${window.location.origin}/product/${productId}`,
+        scannedcount: 0,
+        cartaddcount: 0,
+        salecount: 0,
+        viewcount: 0,
+        salesvelocity: 0,
+        restockthreshold: 10,
+        isonpromotion: false
+      };
 
-    setProducts([...products, product]);
-    setNewProduct({
-      name: '', batchNumber: '', expiryDate: '', aisleLocation: '',
-      mrp: '', price: '', category: '', stock: '', description: ''
-    });
-    setIsAddDialogOpen(false);
-    
-    toast({
-      title: "Product Added",
-      description: `${product.name} has been added to inventory`,
-    });
-  };
+      const { error } = await supabase
+        .from('products')
+        .insert(productData);
 
-  const handleDeleteProduct = (productId: string) => {
-    setProducts(products.filter(p => p.id !== productId));
-    toast({
-      title: "Product Deleted",
-      description: "Product has been removed from inventory",
-    });
-  };
+      if (error) throw error;
 
-  const getStockStatus = (stock: number) => {
-    if (stock === 0) return { label: 'Out of Stock', variant: 'destructive' as const };
-    if (stock < 20) return { label: 'Low Stock', variant: 'secondary' as const };
-    return { label: 'In Stock', variant: 'default' as const };
-  };
+      toast({
+        title: "Product Added",
+        description: `${newProduct.name} has been added to inventory with QR code generated`,
+      });
 
-  const getSalesVelocityColor = (velocity: string) => {
-    switch (velocity) {
-      case 'high': return 'text-success';
-      case 'medium': return 'text-warning';
-      case 'low': return 'text-destructive';
-      default: return 'text-muted-foreground';
+      // Reset form and close dialog
+      setNewProduct({
+        name: '', category: '', price: '', mrp: '', stockCount: '', 
+        aisleLocation: '', batchNumber: '', expiryDate: ''
+      });
+      setIsAddDialogOpen(false);
+      fetchProducts(); // Refresh the list
+    } catch (error) {
+      console.error('Error adding product:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add product",
+        variant: "destructive",
+      });
     }
   };
+
+  const filteredProducts = products.filter(product => {
+    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = categoryFilter === 'all' || product.category === categoryFilter;
+    return matchesSearch && matchesCategory;
+  });
+
+  const categories = [...new Set(products.map(p => p.category).filter(Boolean))];
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h3 className="text-2xl font-bold text-foreground">Inventory Management</h3>
-          <p className="text-muted-foreground">Manage your store inventory and product information</p>
+          <h2 className="text-2xl font-bold text-foreground">Inventory Management</h2>
+          <p className="text-muted-foreground">Manage your product inventory and generate QR codes</p>
         </div>
+        
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
           <DialogTrigger asChild>
-            <Button className="btn-primary">
+            <Button className="bg-primary hover:bg-primary/90">
               <Plus className="w-4 h-4 mr-2" />
               Add Product
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-2xl">
+          <DialogContent className="max-w-md">
             <DialogHeader>
               <DialogTitle>Add New Product</DialogTitle>
             </DialogHeader>
-            <div className="grid grid-cols-2 gap-4 py-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Product Name *</Label>
-                <Input
-                  id="name"
-                  value={newProduct.name}
-                  onChange={(e) => setNewProduct({...newProduct, name: e.target.value})}
-                  placeholder="Enter product name"
-                />
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="name">Product Name *</Label>
+                  <Input
+                    id="name"
+                    value={newProduct.name}
+                    onChange={(e) => setNewProduct({...newProduct, name: e.target.value})}
+                    placeholder="Enter product name"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="category">Category</Label>
+                  <Input
+                    id="category"
+                    value={newProduct.category}
+                    onChange={(e) => setNewProduct({...newProduct, category: e.target.value})}
+                    placeholder="e.g., Personal Care"
+                  />
+                </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="category">Category</Label>
-                <Input
-                  id="category"
-                  value={newProduct.category}
-                  onChange={(e) => setNewProduct({...newProduct, category: e.target.value})}
-                  placeholder="Enter category"
-                />
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="price">Selling Price *</Label>
+                  <Input
+                    id="price"
+                    type="number"
+                    value={newProduct.price}
+                    onChange={(e) => setNewProduct({...newProduct, price: e.target.value})}
+                    placeholder="0.00"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="mrp">MRP</Label>
+                  <Input
+                    id="mrp"
+                    type="number"
+                    value={newProduct.mrp}
+                    onChange={(e) => setNewProduct({...newProduct, mrp: e.target.value})}
+                    placeholder="0.00"
+                  />
+                </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="batchNumber">Batch Number</Label>
-                <Input
-                  id="batchNumber"
-                  value={newProduct.batchNumber}
-                  onChange={(e) => setNewProduct({...newProduct, batchNumber: e.target.value})}
-                  placeholder="Auto-generated if empty"
-                />
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="stockCount">Stock Count *</Label>
+                  <Input
+                    id="stockCount"
+                    type="number"
+                    value={newProduct.stockCount}
+                    onChange={(e) => setNewProduct({...newProduct, stockCount: e.target.value})}
+                    placeholder="0"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="aisleLocation">Location</Label>
+                  <Input
+                    id="aisleLocation"
+                    value={newProduct.aisleLocation}
+                    onChange={(e) => setNewProduct({...newProduct, aisleLocation: e.target.value})}
+                    placeholder="Aisle 5B"
+                  />
+                </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="expiryDate">Expiry Date</Label>
-                <Input
-                  id="expiryDate"
-                  type="date"
-                  value={newProduct.expiryDate}
-                  onChange={(e) => setNewProduct({...newProduct, expiryDate: e.target.value})}
-                />
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="batchNumber">Batch Number</Label>
+                  <Input
+                    id="batchNumber"
+                    value={newProduct.batchNumber}
+                    onChange={(e) => setNewProduct({...newProduct, batchNumber: e.target.value})}
+                    placeholder="Auto-generated"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="expiryDate">Expiry Date</Label>
+                  <Input
+                    id="expiryDate"
+                    type="date"
+                    value={newProduct.expiryDate}
+                    onChange={(e) => setNewProduct({...newProduct, expiryDate: e.target.value})}
+                  />
+                </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="aisleLocation">Aisle Location</Label>
-                <Input
-                  id="aisleLocation"
-                  value={newProduct.aisleLocation}
-                  onChange={(e) => setNewProduct({...newProduct, aisleLocation: e.target.value})}
-                  placeholder="e.g., 5B"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="stock">Stock Quantity</Label>
-                <Input
-                  id="stock"
-                  type="number"
-                  value={newProduct.stock}
-                  onChange={(e) => setNewProduct({...newProduct, stock: e.target.value})}
-                  placeholder="0"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="mrp">MRP *</Label>
-                <Input
-                  id="mrp"
-                  type="number"
-                  step="0.01"
-                  value={newProduct.mrp}
-                  onChange={(e) => setNewProduct({...newProduct, mrp: e.target.value})}
-                  placeholder="0.00"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="price">Selling Price *</Label>
-                <Input
-                  id="price"
-                  type="number"
-                  step="0.01"
-                  value={newProduct.price}
-                  onChange={(e) => setNewProduct({...newProduct, price: e.target.value})}
-                  placeholder="0.00"
-                />
-              </div>
-              <div className="col-span-2 space-y-2">
-                <Label htmlFor="description">Description</Label>
-                <Input
-                  id="description"
-                  value={newProduct.description}
-                  onChange={(e) => setNewProduct({...newProduct, description: e.target.value})}
-                  placeholder="Product description"
-                />
-              </div>
-            </div>
-            <div className="flex justify-end space-x-2">
-              <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
-                Cancel
-              </Button>
-              <Button onClick={handleAddProduct} className="btn-primary">
-                Add Product
+              
+              <Button onClick={handleAddProduct} className="w-full">
+                <QrCode className="w-4 h-4 mr-2" />
+                Add Product & Generate QR
               </Button>
             </div>
           </DialogContent>
         </Dialog>
       </div>
 
-      {/* Filters */}
-      <Card className="card-retail">
-        <CardContent className="p-4">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search products..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
+      {/* Search and Filter */}
+      <div className="flex gap-4 mb-6">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search products..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+        <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+          <SelectTrigger className="w-48">
+            <SelectValue placeholder="Filter by category" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Categories</SelectItem>
+            {categories.map(category => (
+              <SelectItem key={category} value={category}>{category}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Product Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center space-x-2">
+              <Package className="h-5 w-5 text-blue-500" />
+              <div>
+                <p className="text-sm text-muted-foreground">Total Products</p>
+                <p className="text-2xl font-bold">{products.length}</p>
               </div>
             </div>
-            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-              <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Filter by category" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
-                {categories.map(category => (
-                  <SelectItem key={category} value={category}>{category}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center space-x-2">
+              <AlertTriangle className="h-5 w-5 text-orange-500" />
+              <div>
+                <p className="text-sm text-muted-foreground">Low Stock</p>
+                <p className="text-2xl font-bold">
+                  {products.filter(p => p.stockcount <= (p.restockthreshold || 10)).length}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center space-x-2">
+              <QrCode className="h-5 w-5 text-green-500" />
+              <div>
+                <p className="text-sm text-muted-foreground">QR Codes Generated</p>
+                <p className="text-2xl font-bold">{products.filter(p => p.qrlink).length}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Products Table */}
-      <Card className="card-retail">
+      <Card>
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Package className="w-5 h-5" />
-            <span>Products ({filteredProducts.length})</span>
-          </CardTitle>
+          <CardTitle>Products ({filteredProducts.length})</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="overflow-x-auto">
+          {isLoading ? (
+            <div className="text-center py-8">Loading products...</div>
+          ) : (
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Product</TableHead>
                   <TableHead>Category</TableHead>
-                  <TableHead>Batch</TableHead>
-                  <TableHead>Aisle</TableHead>
-                  <TableHead>Stock</TableHead>
                   <TableHead>Price</TableHead>
-                  <TableHead>Sales Velocity</TableHead>
+                  <TableHead>Stock</TableHead>
+                  <TableHead>Location</TableHead>
+                  <TableHead>QR Status</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredProducts.map((product) => {
-                  const stockStatus = getStockStatus(product.stock);
-                  return (
-                    <TableRow key={product.id}>
-                      <TableCell>
-                        <div>
-                          <div className="font-medium">{product.name}</div>
-                          <div className="text-sm text-muted-foreground">{product.id}</div>
-                        </div>
-                      </TableCell>
-                      <TableCell>{product.category}</TableCell>
-                      <TableCell>
-                        <div>
-                          <div className="text-sm">{product.batchNumber}</div>
-                          {product.isNearExpiry && (
-                            <Badge variant="destructive" className="text-xs">
-                              <AlertTriangle className="w-3 h-3 mr-1" />
-                              Near Expiry
-                            </Badge>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell>{product.aisleLocation}</TableCell>
-                      <TableCell>
-                        <div className="flex items-center space-x-2">
-                          <span>{product.stock}</span>
-                          <Badge variant={stockStatus.variant}>{stockStatus.label}</Badge>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div>
-                          <div className="font-medium">₹{product.price}</div>
-                          <div className="text-sm text-muted-foreground">
-                            MRP: ₹{product.mrp} ({product.discount}% off)
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <span className={`capitalize ${getSalesVelocityColor(product.salesVelocity)}`}>
-                          {product.salesVelocity}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex space-x-2">
-                          <Button size="sm" variant="outline">
-                            <Edit className="w-4 h-4" />
-                          </Button>
+                {filteredProducts.map((product) => (
+                  <TableRow key={product.productid}>
+                    <TableCell>
+                      <div>
+                        <p className="font-medium">{product.name}</p>
+                        <p className="text-sm text-muted-foreground">{product.productid}</p>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline">{product.category}</Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div>
+                        <p className="font-medium">₹{product.price}</p>
+                        {product.mrp && product.mrp > product.price && (
+                          <p className="text-sm text-muted-foreground line-through">₹{product.mrp}</p>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge 
+                        variant={product.stockcount <= (product.restockthreshold || 10) ? "destructive" : "default"}
+                      >
+                        {product.stockcount}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>{product.location || 'Not set'}</TableCell>
+                    <TableCell>
+                      {product.qrlink ? (
+                        <Badge variant="default" className="bg-green-100 text-green-800">
+                          <QrCode className="w-3 h-3 mr-1" />
+                          Generated
+                        </Badge>
+                      ) : (
+                        <Badge variant="outline">No QR</Badge>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex space-x-2">
+                        <Button size="sm" variant="outline">
+                          <Edit className="w-3 h-3" />
+                        </Button>
+                        {product.qrlink && (
                           <Button 
                             size="sm" 
                             variant="outline"
-                            onClick={() => handleDeleteProduct(product.id)}
+                            onClick={() => window.open(product.qrlink, '_blank')}
                           >
-                            <Trash className="w-4 h-4" />
+                            <QrCode className="w-3 h-3" />
                           </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
               </TableBody>
             </Table>
-          </div>
+          )}
         </CardContent>
       </Card>
     </div>

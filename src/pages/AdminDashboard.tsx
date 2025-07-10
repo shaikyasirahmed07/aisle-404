@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -16,7 +16,7 @@ import {
   Gift,
   Globe
 } from 'lucide-react';
-import { mockProducts, mockAnalytics, mockComboOffers } from '@/data/mockData';
+import { supabase } from '@/integrations/supabase/client';
 import InventoryManagement from '@/components/admin/InventoryManagement';
 import QRCodeGeneration from '@/components/admin/QRCodeGeneration';
 import OfferSetup from '@/components/admin/OfferSetup';
@@ -25,37 +25,79 @@ import { useTranslation } from 'react-i18next';
 import LanguageSelector from '@/components/LanguageSelector';
 
 const AdminDashboard = () => {
-  const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const { t } = useTranslation();
+  const [adminUser, setAdminUser] = useState<any>(null);
+  const [stats, setStats] = useState({
+    totalProducts: 0,
+    lowStockAlerts: 0,
+    slowMovingStock: 0,
+    upcomingBatches: 0
+  });
 
-  const stats = [
+  useEffect(() => {
+    // Check if admin is logged in
+    const adminSession = localStorage.getItem('admin-session');
+    if (!adminSession) {
+      navigate('/admin-login');
+      return;
+    }
+    setAdminUser(JSON.parse(adminSession));
+    fetchStats();
+  }, [navigate]);
+
+  const fetchStats = async () => {
+    try {
+      const { data: products, error } = await supabase
+        .from('products')
+        .select('*');
+
+      if (error) throw error;
+
+      setStats({
+        totalProducts: products?.length || 0,
+        lowStockAlerts: products?.filter(p => p.stockcount <= (p.restockthreshold || 10)).length || 0,
+        slowMovingStock: products?.filter(p => (p.salesvelocity || 0) < 1).length || 0,
+        upcomingBatches: 8 // Mock value for demo
+      });
+    } catch (error) {
+      console.error('Error fetching stats:', error);
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('admin-session');
+    navigate('/admin-login');
+  };
+
+  const statsConfig = [
     {
-      title: t("admin.totalProducts"),
-      value: mockAnalytics.totalProducts.toLocaleString(),
+      title: "Total Products",
+      value: stats.totalProducts.toLocaleString(),
       icon: Package,
-      color: "text-primary",
-      bgColor: "bg-primary-light"
+      color: "text-blue-600",
+      bgColor: "bg-blue-100"
     },
     {
-      title: t("admin.lowStockAlerts"),
-      value: mockAnalytics.lowStockAlerts,
+      title: "Low Stock Alerts",
+      value: stats.lowStockAlerts,
       icon: AlertTriangle,
-      color: "text-warning",
-      bgColor: "bg-warning-light"
+      color: "text-orange-600",
+      bgColor: "bg-orange-100"
     },
     {
-      title: t("admin.slowMovingStock"),
-      value: mockAnalytics.slowMovingStock,
+      title: "Slow Moving Stock",
+      value: stats.slowMovingStock,
       icon: TrendingDown,
-      color: "text-destructive",
+      color: "text-red-600",
       bgColor: "bg-red-100"
     },
     {
-      title: t("admin.upcomingBatches"),
-      value: mockAnalytics.upcomingBatches,
+      title: "Upcoming Batches",
+      value: stats.upcomingBatches,
       icon: Calendar,
-      color: "text-success",
-      bgColor: "bg-success-light"
+      color: "text-green-600",
+      bgColor: "bg-green-100"
     }
   ];
 
@@ -73,11 +115,11 @@ const AdminDashboard = () => {
             </div>
             <div className="flex items-center space-x-4">
               <span className="text-sm text-muted-foreground">
-                {t('common.welcome')}, {user?.name}
+                Welcome, {adminUser?.name || 'Admin'}
               </span>
               <LanguageSelector />
-              <Button variant="outline" onClick={logout}>
-                {t('common.logout')}
+              <Button variant="outline" onClick={handleLogout}>
+                Logout
               </Button>
             </div>
           </div>
@@ -87,22 +129,22 @@ const AdminDashboard = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Dashboard Overview */}
         <div className="mb-8">
-          <h2 className="text-3xl font-bold text-foreground mb-2">{t('admin.dashboardOverview')}</h2>
-          <p className="text-muted-foreground">{t('admin.monitorPerformance')}</p>
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">Dashboard Overview</h2>
+          <p className="text-gray-600">Monitor store performance and manage inventory</p>
         </div>
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {stats.map((stat, index) => (
-            <Card key={index} className="card-retail hover-lift animate-fade-in" 
+          {statsConfig.map((stat, index) => (
+            <Card key={index} className="hover:shadow-lg transition-shadow duration-200" 
                   style={{ animationDelay: `${index * 0.1}s` }}>
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-muted-foreground mb-1">
+                    <p className="text-sm font-medium text-gray-600 mb-1">
                       {stat.title}
                     </p>
-                    <p className="text-2xl font-bold text-foreground">
+                    <p className="text-2xl font-bold text-gray-900">
                       {stat.value}
                     </p>
                   </div>

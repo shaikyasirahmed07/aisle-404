@@ -1,55 +1,48 @@
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
-import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { QrCode, ShoppingCart, BarChart3 } from 'lucide-react';
 import LanguageSelector from '@/components/LanguageSelector';
 
 const Index = () => {
-  const navigate = useNavigate();
-  const { user, isLoading } = useAuth();
-  const { t } = useTranslation();
-
-  useEffect(() => {
-    // Short delay to show the language selection briefly
-    const timer = setTimeout(() => {
-      if (!isLoading) {
-        if (user) {
-          // Redirect authenticated users to their dashboard
-          navigate(user.role === 'admin' ? '/admin' : '/customer');
-        } else {
-          // Redirect unauthenticated users to login
-          navigate('/login');
-        }
-      }
-    }, 1500);
-
-    return () => clearTimeout(timer);
-  }, [user, isLoading, navigate]);
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-background p-4">
-        <div className="w-full max-w-md text-center">
-          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary mx-auto mb-6"></div>
-          <p className="text-xl font-medium mb-8">{t('common.loading')}</p>
-          
-          <div className="mt-6">
-            <p className="text-muted-foreground mb-3">{t('common.selectLanguage')}</p>
-            <LanguageSelector />
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Landing page with language selector before redirect
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-blue-50 to-white p-4">
-      <div className="w-full max-w-md text-center">
-        <h1 className="text-3xl font-bold text-primary mb-2">{t('common.welcome')}</h1>
-        <p className="text-muted-foreground mb-8">{t('common.selectYourLanguage')}</p>
+    <div className="min-h-screen bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 flex items-center justify-center p-4">
+      <div className="w-full max-w-4xl mx-auto text-center">
+        <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-white/20 backdrop-blur-sm mb-6">
+          <QrCode className="w-10 h-10 text-white" />
+        </div>
         
-        <div className="mb-8 w-full">
+        <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
+          Aisle404 QR Retail System
+        </h1>
+        <p className="text-xl text-white/90 mb-12 max-w-2xl mx-auto">
+          Intelligent QR-based inventory management and customer experience platform
+        </p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12 max-w-2xl mx-auto">
+          <Link to="/admin-login">
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20 hover:bg-white/20 transition-all cursor-pointer">
+              <BarChart3 className="w-12 h-12 text-white mb-4 mx-auto" />
+              <h3 className="text-white font-semibold mb-2 text-xl">Store Manager</h3>
+              <p className="text-white/80 text-sm mb-4">Access admin dashboard, manage inventory, and generate QR codes</p>
+              <Button className="w-full bg-white text-blue-600 hover:bg-gray-100">
+                Admin Login
+              </Button>
+            </div>
+          </Link>
+
+          <Link to="/customer">
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20 hover:bg-white/20 transition-all cursor-pointer">
+              <ShoppingCart className="w-12 h-12 text-white mb-4 mx-auto" />
+              <h3 className="text-white font-semibold mb-2 text-xl">Customer</h3>
+              <p className="text-white/80 text-sm mb-4">Scan QR codes, view products, and manage virtual cart</p>
+              <Button variant="outline" className="w-full border-white text-white hover:bg-white hover:text-blue-600">
+                Start Shopping
+              </Button>
+            </div>
+          </Link>
+        </div>
+
+        <div className="absolute top-4 right-4">
           <LanguageSelector />
         </div>
       </div>

@@ -5,9 +5,10 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
-import Login from "./pages/Login";
+import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import CustomerInterface from "./pages/CustomerInterface";
+import ProductPage from "./pages/ProductPage";
 import NotFound from "./pages/NotFound";
 
 // Import i18n configuration
@@ -24,9 +25,10 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/login" element={<Login />} />
+            <Route path="/admin-login" element={<AdminLogin />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/customer" element={<CustomerInterface />} />
+            <Route path="/product/:productId" element={<ProductPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

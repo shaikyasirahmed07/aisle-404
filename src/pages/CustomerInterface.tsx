@@ -78,7 +78,7 @@ const CustomerInterface = () => {
       toast({
         title: t("customer.budgetReached"),
         description: t("customer.budgetReachedDescription", { percentage, amount: userBudget }),
-        variant: "warning",
+        variant: "destructive",
       });
     }
   };
