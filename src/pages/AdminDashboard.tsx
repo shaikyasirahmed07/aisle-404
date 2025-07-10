@@ -68,7 +68,7 @@ const AdminDashboard = () => {
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
                 <QrCode className="w-8 h-8 text-primary" />
-                <h1 className="text-xl font-bold text-foreground">QR Retail Admin</h1>
+                <h1 className="text-xl font-bold text-foreground">Aisle404 Admin</h1>
               </div>
             </div>
             <div className="flex items-center space-x-4">

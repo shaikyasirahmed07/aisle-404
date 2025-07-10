@@ -1,73 +1,87 @@
-# Welcome to your Lovable project
+# Aisle404 - Smart Retail Solutions
 
-## Project info
+## Overview
 
-**URL**: https://lovable.dev/projects/20cf9b47-84da-4764-853d-c2384cb7fd2e
+Aisle404 is a next-generation retail management platform that bridges the gap between physical and digital shopping experiences. Our platform enables retailers to create seamless, technology-driven shopping environments through QR code integration, real-time inventory management, and data-driven analytics.
 
-## How can I edit this code?
+## Core Features
 
-There are several ways of editing your application.
+- **QR-Based Shopping Experience**: Connect physical products with digital information
+- **Real-time Inventory Management**: Track stock levels across all locations
+- **Analytics Dashboard**: Data-driven insights for business optimization
+- **Multi-language Support**: Serve diverse customer bases with localized experiences
+- **Dynamic Offer Management**: Create and deploy personalized promotions
 
-**Use Lovable**
+## Getting Started
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/20cf9b47-84da-4764-853d-c2384cb7fd2e) and start prompting.
+### Prerequisites
 
-Changes made via Lovable will be committed automatically to this repo.
+- Node.js (v18+)
+- npm or Bun package manager
 
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
+### Installation
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+# Clone the repository
+git clone https://github.com/aisle404/retail-platform.git
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# Navigate to the project directory
+cd aisle404-retail
 
-# Step 3: Install the necessary dependencies.
-npm i
+# Install dependencies
+npm install
+# or
+bun install
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start the development server
 npm run dev
+# or
+bun run dev
 ```
 
-**Edit a file directly in GitHub**
+### Project Structure
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+The project follows a modular architecture:
 
-**Use GitHub Codespaces**
+- `/src/components`: Reusable UI components
+- `/src/pages`: Main application views
+- `/src/contexts`: React context providers
+- `/src/hooks`: Custom React hooks
+- `/src/i18n`: Internationalization resources
+- `/src/lib`: Utility functions
+- `/src/data`: Data models and mock data
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Technology Stack
 
-## What technologies are used for this project?
+Aisle404 is built with modern, production-ready technologies:
 
-This project is built with:
+- **React 18+**: Component-based UI architecture
+- **TypeScript**: Type-safe code development
+- **Vite**: Next generation frontend tooling
+- **Tailwind CSS**: Utility-first CSS framework
+- **shadcn/ui**: Reusable component system
+- **i18next**: Robust internationalization framework
+- **React Router**: Application routing
+- **Recharts**: Responsive charting library
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## Deployment
 
-## How can I deploy this project?
+### Production Build
 
-Simply open [Lovable](https://lovable.dev/projects/20cf9b47-84da-4764-853d-c2384cb7fd2e) and click on Share -> Publish.
+```sh
+# Create optimized production build
+npm run build
 
-## Can I connect a custom domain to my Lovable project?
+# Preview the production build locally
+npm run preview
+```
 
-Yes, you can!
+### Deployment Options
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+- **Vercel/Netlify**: Connect your repository for automatic deployments
+- **Docker**: Use the included Dockerfile for containerized deployments
+- **Traditional Hosting**: Upload the `dist` directory to your web server
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+## License
+
+© 2025 Aisle404, Inc. All rights reserved.
