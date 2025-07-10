@@ -15,7 +15,8 @@ import {
   Navigation,
   User,
   Gift,
-  Receipt
+  Receipt,
+  Globe
 } from 'lucide-react';
 import { mockProducts, Product } from '@/data/mockData';
 import QRScanner from '@/components/customer/QRScanner';
@@ -23,6 +24,8 @@ import ProductSearch from '@/components/customer/ProductSearch';
 import VirtualCart from '@/components/customer/VirtualCart';
 import StoreMap from '@/components/customer/StoreMap';
 import { toast } from '@/hooks/use-toast';
+import { useTranslation } from 'react-i18next';
+import LanguageSelector from '@/components/LanguageSelector';
 
 const CustomerInterface = () => {
   const { user, logout } = useAuth();
@@ -30,23 +33,24 @@ const CustomerInterface = () => {
   const [cartItems, setCartItems] = useState<{product: Product, quantity: number}[]>([]);
   const [showFirstTimeDiscount, setShowFirstTimeDiscount] = useState(false);
   const [userBudget, setUserBudget] = useState<number>(1000);
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (user?.isFirstTime) {
       setShowFirstTimeDiscount(true);
       toast({
-        title: "Welcome! 🎉",
-        description: "You get 5% off on your first purchase!",
+        title: t("customer.welcomeNew"),
+        description: t("customer.firstPurchaseDiscount"),
       });
     }
-  }, [user]);
+  }, [user, t]);
 
   const handleProductScan = (product: Product) => {
     setScannedProducts(prev => {
       const exists = prev.find(p => p.id === product.id);
       if (!exists) {
         toast({
-          title: "Product Scanned!",
+          title: t("customer.productScanned"),
           description: `${product.name} - ₹${product.price}`,
         });
         return [...prev, product];
@@ -67,11 +71,16 @@ const CustomerInterface = () => {
       }
       return [...prev, { product, quantity: 1 }];
     });
-
-    toast({
-      title: "Added to Cart",
-      description: `${product.name} added to your virtual cart`,
-    });
+    
+    const updatedTotalAmount = getTotalAmount() + product.price;
+    if (updatedTotalAmount > userBudget * 0.8) {
+      const percentage = Math.round((updatedTotalAmount / userBudget) * 100);
+      toast({
+        title: t("customer.budgetReached"),
+        description: t("customer.budgetReachedDescription", { percentage, amount: userBudget }),
+        variant: "warning",
+      });
+    }
   };
 
   const getTotalAmount = () => {
@@ -98,23 +107,24 @@ const CustomerInterface = () => {
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
                 <QrCode className="w-8 h-8 text-primary" />
-                <h1 className="text-xl font-bold text-foreground">QR Shopping</h1>
+                <h1 className="text-xl font-bold text-foreground">{t("common.welcome")}</h1>
               </div>
               {user?.isFirstTime && (
                 <Badge variant="secondary" className="bg-success-light text-success">
                   <Gift className="w-3 h-3 mr-1" />
-                  5% First-time Discount!
+                  {t("customer.firstPurchaseDiscount")}
                 </Badge>
               )}
             </div>
             <div className="flex items-center space-x-4">
+              <LanguageSelector />
               <div className="flex items-center space-x-2">
                 <ShoppingCart className="w-5 h-5 text-muted-foreground" />
-                <span className="text-sm font-medium">{cartItems.length} items</span>
+                <span className="text-sm font-medium">{cartItems.length} {t("customer.items")}</span>
                 <span className="text-sm text-muted-foreground">₹{getTotalAmount().toFixed(2)}</span>
               </div>
               <div className="text-right">
-                <div className="text-sm text-muted-foreground">Budget</div>
+                <div className="text-sm text-muted-foreground">{t("customer.budget")}</div>
                 <div className={`text-sm font-medium ${getBudgetStatus().color}`}>
                   ₹{getTotalAmount().toFixed(2)} / ₹{userBudget}
                 </div>
@@ -144,6 +154,11 @@ const CustomerInterface = () => {
               </CardContent>
             </Card>
           )}
+        </div>
+
+        {/* Language Selector */}
+        <div className="mb-8">
+          <LanguageSelector />
         </div>
 
         {/* Main Navigation Tabs */}

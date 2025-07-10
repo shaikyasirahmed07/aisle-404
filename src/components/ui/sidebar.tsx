@@ -1,7 +1,7 @@
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { VariantProps, cva } from "class-variance-authority"
-import { PanelLeft } from "lucide-react"
+import { PanelLeft, ChevronLeft, ChevronRight } from "lucide-react"
 
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
@@ -10,6 +10,8 @@ import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import { Sheet, SheetContent } from "@/components/ui/sheet"
 import { Skeleton } from "@/components/ui/skeleton"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { useTranslation } from "react-i18next"
 import {
   Tooltip,
   TooltipContent,
@@ -20,8 +22,8 @@ import {
 const SIDEBAR_COOKIE_NAME = "sidebar:state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
 const SIDEBAR_WIDTH = "16rem"
-const SIDEBAR_WIDTH_MOBILE = "18rem"
-const SIDEBAR_WIDTH_ICON = "3rem"
+const SIDEBAR_WIDTH_MOBILE = "85%"
+const SIDEBAR_WIDTH_ICON = "3.5rem"
 const SIDEBAR_KEYBOARD_SHORTCUT = "b"
 
 type SidebarContext = {
@@ -44,6 +46,49 @@ function useSidebar() {
 
   return context
 }
+
+const sidebarVariants = cva(
+  "relative flex h-full flex-col overflow-hidden bg-background transition-all duration-300 ease-in-out",
+  {
+    variants: {
+      variant: {
+        default: "border-r",
+        floating: "mx-2 mt-2 rounded-lg border shadow-sm",
+        mobile: "border-0 shadow-lg",
+      },
+      state: {
+        expanded: "",
+        collapsed: "",
+      },
+    },
+    compoundVariants: [
+      {
+        variant: "default",
+        state: "expanded",
+        className: "w-[--sidebar-width]",
+      },
+      {
+        variant: "default",
+        state: "collapsed",
+        className: "w-[--sidebar-icon-width]",
+      },
+      {
+        variant: "floating",
+        state: "expanded",
+        className: "w-[calc(var(--sidebar-width)-1rem)]",
+      },
+      {
+        variant: "floating",
+        state: "collapsed",
+        className: "w-[calc(var(--sidebar-icon-width)-0.5rem)]",
+      },
+    ],
+    defaultVariants: {
+      variant: "default",
+      state: "expanded",
+    },
+  }
+)
 
 const SidebarProvider = React.forwardRef<
   HTMLDivElement,

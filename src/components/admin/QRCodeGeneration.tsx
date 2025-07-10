@@ -1,53 +1,122 @@
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { QrCode, Download, Search, RefreshCw, Eye } from 'lucide-react';
-import { mockProducts, Product } from '@/data/mockData';
+import { QrCode, Download, Search, RefreshCw, Eye, Printer, Settings, FileDown } from 'lucide-react';
+import { mockProducts } from '@/data/mockData';
 import { toast } from '@/hooks/use-toast';
+import { useTranslation } from 'react-i18next';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import type { Product, QRCodeData } from '@/types/product';
+import { useIsMobile } from '@/hooks/use-mobile';
+
+// QR Code field options for selection
+const QR_FIELD_OPTIONS = [
+  { id: 'productId', label: 'Product ID', required: true },
+  { id: 'name', label: 'Product Name' },
+  { id: 'price', label: 'Price' },
+  { id: 'discount', label: 'Discount' },
+  { id: 'expiryDate', label: 'Expiry Date' },
+  { id: 'batchNumber', label: 'Batch Number' },
+  { id: 'category', label: 'Category' },
+  { id: 'location', label: 'Location' },
+  { id: 'shelfNumber', label: 'Shelf Number' },
+  { id: 'isEcoFriendly', label: 'Eco Friendly Product' },
+  { id: 'isOnPromotion', label: 'On Promotion' },
+  { id: 'offerId', label: 'Offer ID' },
+];
 
 const QRCodeGeneration = () => {
-  const [products] = useState<Product[]>(mockProducts);
+  const { t } = useTranslation();
+  const isMobile = useIsMobile();
+  
+  const [products, setProducts] = useState<Product[]>(mockProducts);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
+  const [selectedFields, setSelectedFields] = useState<string[]>(['productId', 'name', 'price']);
+  const [qrCodeTemplate, setQRCodeTemplate] = useState<string>('standard');
+  const [qrSize, setQrSize] = useState<string>('medium');
+  const [showQrPreview, setShowQrPreview] = useState<boolean>(false);
+  const [previewProduct, setPreviewProduct] = useState<Product | null>(null);
 
   const filteredProducts = products.filter(product =>
     product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    product.qrCode.toLowerCase().includes(searchTerm.toLowerCase())
+    product.productId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    product.category.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleGenerateQR = (productId: string) => {
+  const handleGenerateQR = (product: Product) => {
+    // In a real app, this would generate an actual QR code
+    const qrData = createQRData(product);
+    
+    // Update product with new QR data
+    const updatedProducts = products.map(p => {
+      if (p.id === product.id) {
+        return {
+          ...p,
+          qrGeneratedDate: new Date().toISOString(),
+          qrLink: `https://store.example.com/p/${p.productId}`,
+        };
+      }
+      return p;
+    });
+    
+    setProducts(updatedProducts);
+    
     toast({
-      title: "QR Code Generated",
-      description: "QR code has been generated and is ready for download",
+      title: t("QR Code Generated"),
+      description: t("QR code has been generated and is ready for download"),
     });
   };
 
   const handleBulkGenerate = () => {
     if (selectedProducts.length === 0) {
       toast({
-        title: "No products selected",
-        description: "Please select products to generate QR codes",
+        title: t("No products selected"),
+        description: t("Please select products to generate QR codes"),
         variant: "destructive",
       });
       return;
     }
 
+    // Update all selected products with QR data
+    const updatedProducts = products.map(product => {
+      if (selectedProducts.includes(product.id)) {
+        return {
+          ...product,
+          qrGeneratedDate: new Date().toISOString(),
+          qrLink: `https://store.example.com/p/${product.productId}`,
+        };
+      }
+      return product;
+    });
+    
+    setProducts(updatedProducts);
+
     toast({
-      title: "Bulk QR Generation",
-      description: `Generated QR codes for ${selectedProducts.length} products`,
+      title: t("Bulk QR Generation"),
+      description: t(`Generated QR codes for ${selectedProducts.length} products`),
     });
     setSelectedProducts([]);
   };
 
   const handleDownloadQR = (product: Product) => {
-    // In a real app, this would generate and download the actual QR code
+    // In a real app, this would download the actual QR code
     toast({
-      title: "Download Started",
-      description: `Downloading QR code for ${product.name}`,
+      title: t("Download Started"),
+      description: t(`Downloading QR code for ${product.name}`),
     });
+  };
+
+  const handlePreviewQR = (product: Product) => {
+    setPreviewProduct(product);
+    setShowQrPreview(true);
   };
 
   const handleSelectProduct = (productId: string) => {
@@ -65,189 +134,466 @@ const QRCodeGeneration = () => {
       setSelectedProducts(filteredProducts.map(p => p.id));
     }
   };
+  
+  const handleFieldToggle = (fieldId: string) => {
+    if (fieldId === 'productId') return; // Can't deselect product ID
+    
+    setSelectedFields(prev =>
+      prev.includes(fieldId)
+        ? prev.filter(id => id !== fieldId)
+        : [...prev, fieldId]
+    );
+  };
 
-  // Mock QR code component
-  const QRCodeDisplay = ({ qrCode }: { qrCode: string }) => (
-    <div className="w-16 h-16 bg-foreground flex items-center justify-center rounded border">
+  const createQRData = (product: Product): QRCodeData => {
+    const qrData: any = { qrLink: product.qrLink, qrGeneratedDate: new Date().toISOString() };
+    
+    selectedFields.forEach(field => {
+      if (field in product) {
+        qrData[field] = (product as any)[field];
+      }
+    });
+    
+    return qrData as QRCodeData;
+  };
+
+  // QR Code Preview Component
+  const QRCodePreview = ({ product, size }: { product: Product, size: string }) => {
+    // Size classes based on selection
+    const sizeClasses = {
+      small: 'w-20 h-20',
+      medium: 'w-32 h-32',
+      large: 'w-48 h-48',
+      xl: 'w-64 h-64',
+    }[size] || 'w-32 h-32';
+    
+    // Generate selected fields for display
+    const fields = selectedFields.map(field => {
+      const value = (product as any)[field];
+      const label = QR_FIELD_OPTIONS.find(opt => opt.id === field)?.label || field;
+      return { label, value };
+    });
+
+    return (
+      <div className="flex flex-col items-center gap-4">
+        <div className={`${sizeClasses} bg-white p-2 rounded shadow-soft flex items-center justify-center`}>
+          <div className="relative w-full h-full bg-primary/5 border border-primary/20 rounded grid grid-cols-4 grid-rows-4 gap-[2px] overflow-hidden">
+            {/* Generate QR code pattern */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <QrCode className="text-primary opacity-60" size={size === 'small' ? 36 : 48} />
+            </div>
+            {/* Corners */}
+            <div className="col-span-1 row-span-1 bg-primary rounded-tl-sm"></div>
+            <div className="col-span-1 row-span-1 col-start-4 bg-primary rounded-tr-sm"></div>
+            <div className="col-span-1 row-span-1 row-start-4 bg-primary rounded-bl-sm"></div>
+            {/* Center */}
+            <div className="col-start-2 row-start-2 col-span-2 row-span-2 bg-white border-2 border-primary flex items-center justify-center rounded">
+              <span className="text-[8px] font-bold text-primary/70">
+                {product.productId.substring(0, 6)}
+              </span>
+            </div>
+            {/* Random QR bits */}
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div
+                key={i}
+                className={`col-span-1 row-span-1 col-start-${Math.floor(Math.random() * 4) + 1} row-start-${Math.floor(Math.random() * 4) + 1} bg-primary/80 rounded-sm`}
+                style={{ 
+                  gridColumnStart: Math.floor(Math.random() * 4) + 1,
+                  gridRowStart: Math.floor(Math.random() * 4) + 1
+                }}
+              ></div>
+            ))}
+          </div>
+        </div>
+        
+        <div className="text-center">
+          <h4 className="font-semibold">{product.name}</h4>
+          <p className="text-sm text-muted-foreground">ID: {product.productId}</p>
+        </div>
+        
+        <div className="w-full max-w-xs space-y-2 mt-2">
+          <h5 className="text-sm font-medium border-b pb-1">{t("Included Information")}</h5>
+          <div className="text-sm space-y-1 max-h-36 overflow-y-auto">
+            {fields.map((field, index) => (
+              <div key={index} className="flex justify-between">
+                <span className="text-muted-foreground">{field.label}:</span>
+                <span className="font-medium truncate max-w-[150px]">{
+                  typeof field.value === 'boolean' 
+                    ? field.value ? 'Yes' : 'No' 
+                    : field.value?.toString() || '-'
+                }</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        
+        <div className="flex gap-2 mt-4">
+          <Button variant="outline" size="sm">
+            <Printer className="w-4 h-4 mr-1" />
+            {t("Print")}
+          </Button>
+          <Button size="sm">
+            <Download className="w-4 h-4 mr-1" />
+            {t("Download")}
+          </Button>
+        </div>
+      </div>
+    );
+  };
+
+  // Mock QR code thumbnail component
+  const QRCodeDisplay = ({ product }: { product: Product }) => (
+    <div className="w-16 h-16 bg-white flex items-center justify-center rounded border">
       <div className="w-12 h-12 bg-background rounded grid grid-cols-3 grid-rows-3 gap-px">
-        {Array.from({ length: 9 }).map((_, i) => (
-          <div 
-            key={i} 
-            className={`${Math.random() > 0.5 ? 'bg-foreground' : 'bg-background'} rounded-sm`} 
-          />
-        ))}
+        <div className="col-span-1 row-span-1 bg-primary rounded-tl-sm"></div>
+        <div className="col-span-1 row-span-1 bg-background"></div>
+        <div className="col-span-1 row-span-1 bg-primary rounded-tr-sm"></div>
+        <div className="col-span-1 row-span-1 bg-background"></div>
+        <div className="col-span-1 row-span-1 bg-foreground flex items-center justify-center">
+          <span className="text-[6px] font-bold text-background">{product.productId.substring(0, 3)}</span>
+        </div>
+        <div className="col-span-1 row-span-1 bg-background"></div>
+        <div className="col-span-1 row-span-1 bg-primary rounded-bl-sm"></div>
+        <div className="col-span-1 row-span-1 bg-background"></div>
+        <div className="col-span-1 row-span-1 bg-foreground"></div>
       </div>
     </div>
   );
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
+    <div className={`space-y-6 ${isMobile ? 'px-4' : ''}`}>
+      <div className="flex flex-col md:flex-row justify-between gap-4 md:items-center">
         <div>
-          <h3 className="text-2xl font-bold text-foreground">QR Code Generation</h3>
-          <p className="text-muted-foreground">Generate and manage QR codes for your products</p>
+          <h3 className="text-2xl font-bold text-foreground">{t("QR Code Generation")}</h3>
+          <p className="text-muted-foreground">{t("Generate and manage QR codes for your products")}</p>
         </div>
-        <div className="flex space-x-2">
+        <div className="flex flex-wrap gap-2">
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline">
+                <Settings className="w-4 h-4 mr-2" />
+                {t("QR Settings")}
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>{t("QR Code Settings")}</DialogTitle>
+                <DialogDescription>
+                  {t("Configure what information to include in your QR codes")}
+                </DialogDescription>
+              </DialogHeader>
+              
+              <Tabs defaultValue="fields" className="w-full mt-4">
+                <TabsList className="grid grid-cols-2">
+                  <TabsTrigger value="fields">{t("Fields")}</TabsTrigger>
+                  <TabsTrigger value="appearance">{t("Appearance")}</TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="fields" className="mt-4 space-y-4">
+                  <div className="space-y-1">
+                    <h4 className="text-sm font-medium">{t("Select Fields to Include")}</h4>
+                    <p className="text-xs text-muted-foreground">{t("Choose what product information to include in generated QR codes")}</p>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {QR_FIELD_OPTIONS.map(field => (
+                      <div key={field.id} className="flex items-center space-x-2">
+                        <Checkbox 
+                          id={`field-${field.id}`}
+                          checked={selectedFields.includes(field.id)}
+                          onCheckedChange={() => handleFieldToggle(field.id)}
+                          disabled={field.required}
+                        />
+                        <label 
+                          htmlFor={`field-${field.id}`}
+                          className={`text-sm ${field.required ? 'font-medium' : ''}`}
+                        >
+                          {t(field.label)}
+                          {field.required && <span className="text-destructive ml-1">*</span>}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="appearance" className="mt-4 space-y-4">
+                  <div>
+                    <label htmlFor="qr-template" className="text-sm font-medium">{t("QR Template")}</label>
+                    <Select
+                      value={qrCodeTemplate}
+                      onValueChange={setQRCodeTemplate}
+                    >
+                      <SelectTrigger id="qr-template" className="mt-1">
+                        <SelectValue placeholder={t("Select template")} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="standard">{t("Standard")}</SelectItem>
+                        <SelectItem value="branded">{t("Branded")}</SelectItem>
+                        <SelectItem value="minimal">{t("Minimal")}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="qr-size" className="text-sm font-medium">{t("QR Code Size")}</label>
+                    <Select
+                      value={qrSize}
+                      onValueChange={setQrSize}
+                    >
+                      <SelectTrigger id="qr-size" className="mt-1">
+                        <SelectValue placeholder={t("Select size")} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="small">{t("Small")}</SelectItem>
+                        <SelectItem value="medium">{t("Medium")}</SelectItem>
+                        <SelectItem value="large">{t("Large")}</SelectItem>
+                        <SelectItem value="xl">{t("Extra Large")}</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </TabsContent>
+              </Tabs>
+              
+              <DialogFooter className="mt-4">
+                <DialogClose asChild>
+                  <Button variant="outline">{t("Cancel")}</Button>
+                </DialogClose>
+                <Button>{t("Save Settings")}</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+          
           <Button 
             onClick={handleBulkGenerate}
             disabled={selectedProducts.length === 0}
-            className="btn-secondary"
+            variant={isMobile ? "mobile" : "default"}
+            className={isMobile ? "w-full" : ""}
           >
             <RefreshCw className="w-4 h-4 mr-2" />
-            Generate Selected ({selectedProducts.length})
+            {t("Generate Selected")} ({selectedProducts.length})
           </Button>
         </div>
       </div>
 
-      {/* Search and Filters */}
-      <Card className="card-retail">
-        <CardContent className="p-4">
-          <div className="flex items-center space-x-4">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search products or QR codes..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-            <Button variant="outline" onClick={handleSelectAll}>
-              {selectedProducts.length === filteredProducts.length ? 'Deselect All' : 'Select All'}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="flex flex-col md:flex-row gap-4">
+        <div className="flex-1 relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder={t("Search products...")}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-9"
+          />
+        </div>
+        
+        <Button 
+          onClick={() => setSearchTerm('')}
+          variant="outline"
+          className="md:w-auto w-full"
+        >
+          {t("Clear")}
+        </Button>
+      </div>
 
-      {/* QR Codes Table */}
-      <Card className="card-retail">
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <QrCode className="w-5 h-5" />
-            <span>QR Codes ({filteredProducts.length})</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
+      {isMobile ? (
+        <div className="space-y-4">
+          {filteredProducts.length > 0 ? (
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-muted-foreground">
+                {filteredProducts.length} {t("products found")}
+              </span>
+              <Button variant="ghost" size="sm" onClick={handleSelectAll}>
+                {selectedProducts.length === filteredProducts.length
+                  ? t("Deselect All")
+                  : t("Select All")}
+              </Button>
+            </div>
+          ) : (
+            <p className="text-center py-8 text-muted-foreground">
+              {t("No products found matching your search")}
+            </p>
+          )}
+
+          <div className="space-y-3">
+            {filteredProducts.map((product) => (
+              <Card key={product.id} className="overflow-hidden">
+                <div className="p-4 flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-3">
+                    <Checkbox 
+                      checked={selectedProducts.includes(product.id)}
+                      onCheckedChange={() => handleSelectProduct(product.id)}
+                      id={`select-${product.id}`}
+                      className="h-5 w-5"
+                    />
+                    <div>
+                      <h4 className="font-medium">{product.name}</h4>
+                      <div className="flex items-center gap-2 mt-1">
+                        <Badge variant="outline" className="text-xs">
+                          {product.productId}
+                        </Badge>
+                        <span className="text-xs text-muted-foreground">
+                          {product.category}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  {product.qrGeneratedDate && (
+                    <div className="flex items-center">
+                      <QRCodeDisplay product={product} />
+                    </div>
+                  )}
+                </div>
+                <CardFooter className="bg-muted/30 p-2 flex justify-between">
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => handlePreviewQR(product)}
+                  >
+                    <Eye className="h-4 w-4 mr-1" />
+                    {t("Preview")}
+                  </Button>
+
+                  {product.qrGeneratedDate ? (
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      onClick={() => handleDownloadQR(product)}
+                    >
+                      <Download className="h-4 w-4 mr-1" />
+                      {t("Download")}
+                    </Button>
+                  ) : (
+                    <Button
+                      size="sm"
+                      variant="default"
+                      onClick={() => handleGenerateQR(product)}
+                    >
+                      <QrCode className="h-4 w-4 mr-1" />
+                      {t("Generate")}
+                    </Button>
+                  )}
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <Card className="border shadow-sm">
+          <CardContent className="p-0">
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-12">
-                    <input
-                      type="checkbox"
-                      checked={selectedProducts.length === filteredProducts.length && filteredProducts.length > 0}
-                      onChange={handleSelectAll}
-                      className="rounded"
+                    <Checkbox 
+                      checked={filteredProducts.length > 0 && selectedProducts.length === filteredProducts.length}
+                      onCheckedChange={handleSelectAll}
                     />
                   </TableHead>
-                  <TableHead>QR Code</TableHead>
-                  <TableHead>Product</TableHead>
-                  <TableHead>QR ID</TableHead>
-                  <TableHead>Aisle Location</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Actions</TableHead>
+                  <TableHead className="w-16">{t("QR")}</TableHead>
+                  <TableHead>{t("Product")}</TableHead>
+                  <TableHead>{t("Category")}</TableHead>
+                  <TableHead>{t("Location")}</TableHead>
+                  <TableHead>{t("Generated Date")}</TableHead>
+                  <TableHead className="text-right">{t("Actions")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredProducts.map((product) => (
-                  <TableRow key={product.id}>
-                    <TableCell>
-                      <input
-                        type="checkbox"
-                        checked={selectedProducts.includes(product.id)}
-                        onChange={() => handleSelectProduct(product.id)}
-                        className="rounded"
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <QRCodeDisplay qrCode={product.qrCode} />
-                    </TableCell>
-                    <TableCell>
-                      <div>
-                        <div className="font-medium">{product.name}</div>
-                        <div className="text-sm text-muted-foreground">{product.category}</div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <code className="bg-muted px-2 py-1 rounded text-sm">
-                        {product.qrCode}
-                      </code>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline">{product.aisleLocation}</Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="default" className="bg-success text-success-foreground">
-                        Active
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex space-x-2">
-                        <Button 
-                          size="sm" 
-                          variant="outline"
-                          onClick={() => handleDownloadQR(product)}
-                        >
-                          <Download className="w-4 h-4" />
-                        </Button>
-                        <Button 
-                          size="sm" 
-                          variant="outline"
-                          onClick={() => handleGenerateQR(product.id)}
-                        >
-                          <RefreshCw className="w-4 h-4" />
-                        </Button>
-                        <Button 
-                          size="sm" 
-                          variant="outline"
-                        >
-                          <Eye className="w-4 h-4" />
-                        </Button>
-                      </div>
+                {filteredProducts.length > 0 ? (
+                  filteredProducts.map((product) => (
+                    <TableRow key={product.id}>
+                      <TableCell>
+                        <Checkbox 
+                          checked={selectedProducts.includes(product.id)}
+                          onCheckedChange={() => handleSelectProduct(product.id)}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        {product.qrGeneratedDate && (
+                          <QRCodeDisplay product={product} />
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <div>
+                          <div className="font-medium">{product.name}</div>
+                          <div className="text-sm text-muted-foreground">{product.productId}</div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline">{product.category}</Badge>
+                      </TableCell>
+                      <TableCell>{product.location}</TableCell>
+                      <TableCell>
+                        {product.qrGeneratedDate ? (
+                          <div className="text-sm">
+                            {new Date(product.qrGeneratedDate).toLocaleDateString()}
+                          </div>
+                        ) : (
+                          <Badge variant="outline" className="text-muted-foreground bg-muted/50">
+                            {t("Not Generated")}
+                          </Badge>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-2">
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => handlePreviewQR(product)}
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          
+                          {product.qrGeneratedDate ? (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleDownloadQR(product)}
+                            >
+                              <Download className="h-4 w-4" />
+                            </Button>
+                          ) : (
+                            <Button
+                              size="sm"
+                              onClick={() => handleGenerateQR(product)}
+                            >
+                              <QrCode className="h-4 w-4 mr-1" />
+                              {t("Generate")}
+                            </Button>
+                          )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={7} className="h-24 text-center">
+                      {t("No products found matching your search")}
                     </TableCell>
                   </TableRow>
-                ))}
+                )}
               </TableBody>
             </Table>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
 
-      {/* QR Code Management Tips */}
-      <Card className="card-retail bg-primary-light border-primary/20">
-        <CardHeader>
-          <CardTitle className="text-primary">QR Code Management Tips</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <div className="flex items-start space-x-3">
-            <QrCode className="w-5 h-5 text-primary mt-0.5" />
-            <div>
-              <p className="font-medium text-foreground">Print Quality</p>
-              <p className="text-sm text-muted-foreground">
-                Ensure QR codes are printed at minimum 2cm x 2cm for reliable scanning
-              </p>
+      {/* QR Code Preview Dialog */}
+      <Dialog open={showQrPreview} onOpenChange={setShowQrPreview}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>{t("QR Code Preview")}</DialogTitle>
+            <DialogDescription>
+              {t("Preview how your QR code will appear")}
+            </DialogDescription>
+          </DialogHeader>
+          
+          {previewProduct && (
+            <div className="flex justify-center py-4">
+              <QRCodePreview product={previewProduct} size={qrSize} />
             </div>
-          </div>
-          <div className="flex items-start space-x-3">
-            <QrCode className="w-5 h-5 text-primary mt-0.5" />
-            <div>
-              <p className="font-medium text-foreground">Placement</p>
-              <p className="text-sm text-muted-foreground">
-                Place QR codes at eye level on product shelves for easy customer access
-              </p>
-            </div>
-          </div>
-          <div className="flex items-start space-x-3">
-            <QrCode className="w-5 h-5 text-primary mt-0.5" />
-            <div>
-              <p className="font-medium text-foreground">Batch Updates</p>
-              <p className="text-sm text-muted-foreground">
-                Regenerate QR codes when product information changes significantly
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

@@ -6,8 +6,10 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { QrCode, ShoppingCart, Users, BarChart3 } from 'lucide-react';
+import { QrCode, ShoppingCart, Users, BarChart3, Globe } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import { useTranslation } from 'react-i18next';
+import LanguageSelector from '@/components/LanguageSelector';
 
 const Login = () => {
   const [adminCreds, setAdminCreds] = useState({ employeeId: '', password: '' });
@@ -15,6 +17,7 @@ const Login = () => {
   const [otpSent, setOtpSent] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleAdminLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,14 +31,14 @@ const Login = () => {
         employeeId: adminCreds.employeeId
       });
       toast({
-        title: "Welcome back!",
-        description: "Logged in successfully as Store Manager",
+        title: t("common.welcome"),
+        description: t("auth.loginSuccess"),
       });
       navigate('/admin');
     } else {
       toast({
-        title: "Invalid credentials",
-        description: "Please check your employee ID and password",
+        title: t("auth.invalidCredentials"),
+        description: t("auth.checkCredentials"),
         variant: "destructive",
       });
     }
@@ -45,13 +48,13 @@ const Login = () => {
     if (customerCreds.phone.length === 10) {
       setOtpSent(true);
       toast({
-        title: "OTP sent!",
-        description: "Please enter OTP: 123456",
+        title: t("auth.otpSent"),
+        description: t("auth.enterOtp", { otp: "123456" }),
       });
     } else {
       toast({
-        title: "Invalid phone number",
-        description: "Please enter a valid 10-digit phone number",
+        title: t("auth.invalidPhone"),
+        description: t("auth.validPhone"),
         variant: "destructive",
       });
     }
@@ -69,14 +72,14 @@ const Login = () => {
         isFirstTime: Math.random() > 0.5 // Random first-time user
       });
       toast({
-        title: "Welcome!",
-        description: "Logged in successfully",
+        title: t("common.welcome"),
+        description: t("auth.loginSuccess"),
       });
       navigate('/customer');
     } else {
       toast({
-        title: "Invalid OTP",
-        description: "Please enter the correct OTP",
+        title: t("auth.invalidOtp"),
+        description: t("auth.enterCorrectOtp"),
         variant: "destructive",
       });
     }
@@ -94,26 +97,25 @@ const Login = () => {
             QR Retail System
           </h1>
           <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-            Enhancing retail operations through smart QR code-based inventory management, 
-            customer engagement, and analytics
+            {t("hero.description")}
           </p>
           
           {/* Feature highlights */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 max-w-4xl mx-auto">
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
               <ShoppingCart className="w-8 h-8 text-white mb-3 mx-auto" />
-              <h3 className="text-white font-semibold mb-2">Smart Shopping</h3>
-              <p className="text-white/80 text-sm">QR scanning, virtual cart, and store navigation</p>
+              <h3 className="text-white font-semibold mb-2">{t("features.smartShopping.title")}</h3>
+              <p className="text-white/80 text-sm">{t("features.smartShopping.description")}</p>
             </div>
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
               <Users className="w-8 h-8 text-white mb-3 mx-auto" />
-              <h3 className="text-white font-semibold mb-2">Inventory Management</h3>
-              <p className="text-white/80 text-sm">Real-time stock tracking and QR code generation</p>
+              <h3 className="text-white font-semibold mb-2">{t("features.inventoryManagement.title")}</h3>
+              <p className="text-white/80 text-sm">{t("features.inventoryManagement.description")}</p>
             </div>
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
               <BarChart3 className="w-8 h-8 text-white mb-3 mx-auto" />
-              <h3 className="text-white font-semibold mb-2">Data Analytics</h3>
-              <p className="text-white/80 text-sm">Actionable insights for business optimization</p>
+              <h3 className="text-white font-semibold mb-2">{t("features.dataAnalytics.title")}</h3>
+              <p className="text-white/80 text-sm">{t("features.dataAnalytics.description")}</p>
             </div>
           </div>
         </div>
@@ -122,47 +124,47 @@ const Login = () => {
         <div className="max-w-md mx-auto animate-slide-up">
           <Card className="card-retail shadow-strong">
             <CardHeader className="text-center">
-              <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>
+              <CardTitle className="text-2xl font-bold">{t("login.welcomeBack")}</CardTitle>
               <CardDescription>
-                Choose your role to access the system
+                {t("login.chooseRole")}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Tabs defaultValue="admin" className="w-full">
                 <TabsList className="grid w-full grid-cols-2 mb-6">
-                  <TabsTrigger value="admin">Store Manager</TabsTrigger>
-                  <TabsTrigger value="customer">Customer</TabsTrigger>
+                  <TabsTrigger value="admin">{t("roles.storeManager")}</TabsTrigger>
+                  <TabsTrigger value="customer">{t("roles.customer")}</TabsTrigger>
                 </TabsList>
                 
                 <TabsContent value="admin">
                   <form onSubmit={handleAdminLogin} className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="employeeId">Employee ID</Label>
+                      <Label htmlFor="employeeId">{t("auth.employeeId")}</Label>
                       <Input
                         id="employeeId"
                         type="text"
-                        placeholder="Enter employee ID"
+                        placeholder={t("auth.enterEmployeeId")}
                         value={adminCreds.employeeId}
                         onChange={(e) => setAdminCreds({...adminCreds, employeeId: e.target.value})}
                         required
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="password">Password</Label>
+                      <Label htmlFor="password">{t("auth.password")}</Label>
                       <Input
                         id="password"
                         type="password"
-                        placeholder="Enter password"
+                        placeholder={t("auth.enterPassword")}
                         value={adminCreds.password}
                         onChange={(e) => setAdminCreds({...adminCreds, password: e.target.value})}
                         required
                       />
                     </div>
                     <Button type="submit" className="w-full btn-primary">
-                      Login as Manager
+                      {t("auth.loginAsManager")}
                     </Button>
                     <p className="text-xs text-muted-foreground text-center">
-                      Demo: Use ID "admin001" and password "password123"
+                      {t("auth.demoCredentials", { id: "admin001", password: "password123" })}
                     </p>
                   </form>
                 </TabsContent>
@@ -170,12 +172,12 @@ const Login = () => {
                 <TabsContent value="customer">
                   <form onSubmit={handleCustomerLogin} className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="phone">Phone Number</Label>
+                      <Label htmlFor="phone">{t("auth.phoneNumber")}</Label>
                       <div className="flex gap-2">
                         <Input
                           id="phone"
                           type="tel"
-                          placeholder="Enter 10-digit phone"
+                          placeholder={t("auth.enterPhoneNumber")}
                           value={customerCreds.phone}
                           onChange={(e) => setCustomerCreds({...customerCreds, phone: e.target.value})}
                           required
@@ -187,17 +189,17 @@ const Login = () => {
                           variant="outline"
                           disabled={otpSent || customerCreds.phone.length !== 10}
                         >
-                          {otpSent ? 'Sent' : 'Send OTP'}
+                          {otpSent ? t("auth.sent") : t("auth.sendOtp")}
                         </Button>
                       </div>
                     </div>
                     {otpSent && (
                       <div className="space-y-2">
-                        <Label htmlFor="otp">OTP</Label>
+                        <Label htmlFor="otp">{t("auth.otp")}</Label>
                         <Input
                           id="otp"
                           type="text"
-                          placeholder="Enter OTP"
+                          placeholder={t("auth.enterOtp")}
                           value={customerCreds.otp}
                           onChange={(e) => setCustomerCreds({...customerCreds, otp: e.target.value})}
                           required
@@ -210,16 +212,21 @@ const Login = () => {
                       className="w-full btn-secondary"
                       disabled={!otpSent || customerCreds.otp.length !== 6}
                     >
-                      Login as Customer
+                      {t("auth.loginAsCustomer")}
                     </Button>
                     <p className="text-xs text-muted-foreground text-center">
-                      Demo OTP: 123456
+                      {t("auth.demoOtp", { otp: "123456" })}
                     </p>
                   </form>
                 </TabsContent>
               </Tabs>
             </CardContent>
           </Card>
+        </div>
+
+        {/* Language Selector */}
+        <div className="absolute top-4 right-4">
+          <LanguageSelector />
         </div>
       </div>
     </div>

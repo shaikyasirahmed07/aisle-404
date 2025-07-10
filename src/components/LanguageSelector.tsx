@@ -8,34 +8,60 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Languages } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { cn } from '@/lib/utils';
 
 const languages = [
-  { code: 'en', name: 'English' },
-  { code: 'hi', name: 'हिंदी' },
-  { code: 'te', name: 'తెలుగు' },
-  { code: 'ta', name: 'தமிழ்' },
-  { code: 'bn', name: 'বাংলা' },
-  { code: 'ur', name: 'اردو' },
-  { code: 'mr', name: 'मराठी' },
+  { code: 'en', name: 'English', nativeName: 'English' },
+  { code: 'hi', name: 'Hindi', nativeName: 'हिंदी' },
+  { code: 'te', name: 'Telugu', nativeName: 'తెలుగు' },
+  { code: 'ta', name: 'Tamil', nativeName: 'தமிழ்' },
+  { code: 'bn', name: 'Bengali', nativeName: 'বাংলা' },
+  { code: 'ur', name: 'Urdu', nativeName: 'اردو' },
+  { code: 'mr', name: 'Marathi', nativeName: 'मराठी' },
 ];
 
 const LanguageSelector = () => {
   const { i18n } = useTranslation();
+  const isMobile = useIsMobile();
 
   const handleLanguageChange = (langCode: string) => {
     i18n.changeLanguage(langCode);
+    // Store preference in localStorage for persistence
+    localStorage.setItem('preferredLanguage', langCode);
   };
+
+  const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0];
 
   return (
     <Select value={i18n.language} onValueChange={handleLanguageChange}>
-      <SelectTrigger className="w-40 h-10">
-        <Languages className="w-4 h-4 mr-2" />
-        <SelectValue placeholder="Language" />
+      <SelectTrigger 
+        className={cn(
+          "flex items-center gap-2 border-muted/60 bg-background/80 backdrop-blur-sm",
+          isMobile ? "w-full h-11 rounded-xl px-3" : "w-40 h-10"
+        )}
+      >
+        <Languages className="w-4 h-4" />
+        <SelectValue 
+          placeholder="Language" 
+          className="text-sm font-medium"
+        >
+          {isMobile ? currentLanguage.nativeName : currentLanguage.name}
+        </SelectValue>
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent className="max-h-72">
         {languages.map((lang) => (
-          <SelectItem key={lang.code} value={lang.code}>
-            {lang.name}
+          <SelectItem 
+            key={lang.code} 
+            value={lang.code}
+            className="flex items-center gap-2 h-11"
+          >
+            <div className="flex flex-col">
+              <span className="font-medium">{lang.name}</span>
+              {lang.name !== lang.nativeName && (
+                <span className="text-xs text-muted-foreground">{lang.nativeName}</span>
+              )}
+            </div>
           </SelectItem>
         ))}
       </SelectContent>

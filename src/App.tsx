@@ -10,6 +10,9 @@ import AdminDashboard from "./pages/AdminDashboard";
 import CustomerInterface from "./pages/CustomerInterface";
 import NotFound from "./pages/NotFound";
 
+// Import i18n configuration
+import "@/i18n";
+
 const queryClient = new QueryClient();
 
 const App = () => (

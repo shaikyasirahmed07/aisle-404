@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* QR Retail System Design System */
+/* Aisle 404 - Retail System Design System */
 
 @layer base {
   :root {
@@ -16,13 +16,13 @@
     --popover-foreground: 240 10% 3.9%;
 
     /* Primary - Walmart Blue */
-    --primary: 208 100% 39%;
+    --primary: 208 100% 40.4%; /* #0071CE */
     --primary-foreground: 0 0% 98%;
-    --primary-hover: 208 100% 34%;
+    --primary-hover: 208 100% 35%;
     --primary-light: 208 100% 92%;
 
     /* Secondary - Walmart Yellow */
-    --secondary: 44 100% 55%;
+    --secondary: 44 100% 56.5%; /* #FFC220 */
     --secondary-foreground: 208 100% 20%;
     --secondary-hover: 44 100% 50%;
     --secondary-light: 44 100% 95%;
@@ -53,21 +53,28 @@
     --radius: 0.75rem;
 
     /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-hover)));
-    --gradient-secondary: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--secondary-hover)));
-    --gradient-hero: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 100%);
-    --gradient-card: linear-gradient(145deg, hsl(0 0% 100% / 0.95), hsl(208 100% 98% / 0.8));
-    --gradient-mobile-bg: linear-gradient(180deg, hsl(208 100% 98%) 0%, hsl(0 0% 100%) 100%);
-    --gradient-walmart-subtle: linear-gradient(135deg, hsl(208 100% 96%) 0%, hsl(44 100% 98%) 100%);
+    --gradient-primary: linear-gradient(135deg, #0071CE, #005CB8);
+    --gradient-secondary: linear-gradient(135deg, #FFC220, #FFB400);
+    --gradient-hero: linear-gradient(135deg, #0071CE 0%, #FFC220 100%);
+    --gradient-card: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(236, 244, 252, 0.8));
+    --gradient-mobile-bg: linear-gradient(180deg, #f5f9fd 0%, #ffffff 100%);
+    --gradient-walmart-subtle: linear-gradient(135deg, #ecf4fc 0%, #fff8e6 100%);
+    --gradient-button: linear-gradient(to bottom, #0071CE, #005CB8);
+    --gradient-button-hover: linear-gradient(to bottom, #005CB8, #004A9C);
+    --gradient-button-secondary: linear-gradient(to bottom, #FFC220, #FFB400);
+    --gradient-button-secondary-hover: linear-gradient(to bottom, #FFB400, #FFA700);
 
     /* Shadows */
-    --shadow-soft: 0 2px 10px hsl(var(--primary) / 0.1);
-    --shadow-medium: 0 8px 25px hsl(var(--primary) / 0.15);
-    --shadow-strong: 0 15px 35px hsl(var(--primary) / 0.2);
+    --shadow-soft: 0 2px 10px rgba(0, 113, 206, 0.1);
+    --shadow-medium: 0 8px 25px rgba(0, 113, 206, 0.15);
+    --shadow-strong: 0 15px 35px rgba(0, 113, 206, 0.2);
+    --shadow-button: 0 3px 8px rgba(0, 113, 206, 0.25);
+    --shadow-button-hover: 0 5px 12px rgba(0, 113, 206, 0.35);
 
     /* Animations */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --transition-button: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .dark {
@@ -80,12 +87,12 @@
     --popover: 240 10% 3.9%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 208 100% 39%;
+    --primary: 208 100% 40.4%;
     --primary-foreground: 0 0% 98%;
-    --primary-hover: 208 100% 34%;
+    --primary-hover: 208 100% 35%;
     --primary-light: 208 100% 25%;
 
-    --secondary: 44 100% 55%;
+    --secondary: 44 100% 56.5%;
     --secondary-foreground: 208 100% 20%;
     --secondary-hover: 44 100% 50%;
     --secondary-light: 44 100% 25%;
@@ -111,149 +118,144 @@
     --input: 240 3.7% 15.9%;
     --ring: 217 91% 60%;
 
-    --gradient-hero: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 100%);
-    --gradient-card: linear-gradient(145deg, hsl(240 10% 6% / 0.95), hsl(240 10% 8% / 0.8));
-    --gradient-mobile-bg: linear-gradient(180deg, hsl(240 10% 4%) 0%, hsl(240 10% 6%) 100%);
-    --gradient-walmart-subtle: linear-gradient(135deg, hsl(208 100% 15%) 0%, hsl(44 100% 20%) 100%);
-  }
-}
-
-@layer base {
-  * {
-    @apply border-border;
+    --gradient-hero: linear-gradient(135deg, #0071CE 0%, #FFC220 100%);
+    --gradient-card: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(240, 248, 255, 0.8));
+    --gradient-mobile-bg: linear-gradient(180deg, #f5f9fd 0%, #ffffff 100%);
+    --gradient-walmart-subtle: linear-gradient(135deg, #0071CE 15%, #FFC220 20%);
   }
 
+  /* Global styles */
   body {
-    @apply bg-background text-foreground font-sans;
-  }
-
-  /* Custom scrollbar */
-  ::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  ::-webkit-scrollbar-track {
-    @apply bg-muted;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    @apply bg-primary/20 rounded-full;
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    @apply bg-primary/30;
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
 
+/* Mobile-first component styles */
 @layer components {
-  /* Button variants for retail system */
-  .btn-retail {
-    @apply inline-flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50;
+  /* Mobile-optimized container */
+  .container-mobile {
+    @apply w-full px-4 sm:px-6 md:px-8 max-w-full md:max-w-[768px] lg:max-w-[1024px] xl:max-w-[1280px];
   }
 
-  .btn-primary {
-    @apply btn-retail bg-gradient-to-r from-primary to-primary-hover text-primary-foreground shadow-soft hover:shadow-medium;
-  }
-
-  .btn-secondary {
-    @apply btn-retail bg-gradient-to-r from-secondary to-secondary-hover text-secondary-foreground shadow-soft hover:shadow-medium;
-  }
-
-  .btn-success {
-    @apply btn-retail bg-success text-success-foreground hover:bg-success/90;
-  }
-
-  .btn-warning {
-    @apply btn-retail bg-warning text-warning-foreground hover:bg-warning/90;
-  }
-
-  /* Card variants */
-  .card-retail {
-    @apply bg-card text-card-foreground rounded-xl shadow-soft border border-border/50 backdrop-blur-sm;
-  }
-
-  .card-gradient {
-    @apply bg-gradient-to-br from-card via-card/80 to-muted/20 backdrop-blur-sm border border-border/30;
-  }
-
-  /* Animation classes */
-  .animate-fade-in {
-    @apply opacity-0 animate-[fadeIn_0.5s_ease-out_forwards];
-  }
-
-  .animate-slide-up {
-    @apply translate-y-4 opacity-0 animate-[slideUp_0.5s_ease-out_forwards];
-  }
-
-  .animate-scale-in {
-    @apply scale-95 opacity-0 animate-[scaleIn_0.3s_ease-out_forwards];
-  }
-
-  .hover-lift {
-    @apply transition-transform duration-300 hover:-translate-y-1 hover:shadow-medium;
-  }
-
-  /* Mobile-first classes */
-  .mobile-container {
-    @apply px-4 py-2 max-w-md mx-auto;
-  }
-
-  .mobile-card {
-    @apply bg-gradient-card rounded-2xl shadow-soft border border-border/30 p-4 mb-4;
-  }
-
+  /* Mobile-optimized buttons */
   .mobile-button {
-    @apply w-full py-3 px-4 rounded-xl font-medium transition-all duration-300 text-center;
+    @apply rounded-xl py-3 px-5 font-medium text-base w-full flex items-center justify-center gap-2;
+    transition: var(--transition-button);
+    box-shadow: var(--shadow-button);
+  }
+  
+  .mobile-button:active {
+    transform: translateY(1px);
+  }
+  
+  /* Touch-friendly cards */
+  .touch-card {
+    @apply rounded-xl p-4 bg-white shadow-soft border border-border/50;
+    transition: var(--transition-smooth);
+  }
+  
+  .touch-card:active {
+    @apply bg-muted/30;
   }
 
+  /* Mobile UI interactive elements */
+  .bottom-nav {
+    @apply fixed bottom-0 left-0 right-0 bg-background border-t border-border flex justify-around items-center h-16 px-4 pb-safe-bottom z-50;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+  }
+  
+  .bottom-nav-item {
+    @apply flex flex-col items-center justify-center w-16 py-2;
+  }
+
+  /* Gradients */
+  .bg-gradient-primary {
+    background: var(--gradient-primary);
+  }
+  
+  .bg-gradient-secondary {
+    background: var(--gradient-secondary);
+  }
+  
+  .bg-gradient-hero {
+    background: var(--gradient-hero);
+  }
+  
+  .bg-gradient-card {
+    background: var(--gradient-card);
+  }
+  
+  .bg-gradient-walmart-subtle {
+    background: var(--gradient-walmart-subtle);
+  }
+  
+  .bg-gradient-mobile {
+    background: var(--gradient-mobile-bg);
+  }
+  
+  /* Admin-specific components */
+  .admin-card {
+    @apply rounded-xl p-6 bg-white shadow-soft border border-border/50;
+  }
+  
+  /* Animation classes */
+  .animate-fadeIn {
+    animation: fadeIn 0.3s ease-out forwards;
+  }
+  
+  .animate-slideInUp {
+    animation: slideInUp 0.3s ease-out forwards;
+  }
+}
+
+/* Utility classes */
+@layer utilities {
+  /* Touch target size - minimum 44x44px for accessibility */
   .touch-target {
-    @apply min-h-[44px] min-w-[44px] flex items-center justify-center;
+    @apply min-w-[44px] min-h-[44px];
+  }
+  
+  /* Safe area insets for notches and home indicators */
+  .pt-safe {
+    padding-top: env(safe-area-inset-top);
+  }
+  
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  
+  /* Font sizes optimized for mobile */
+  .text-mobile-title {
+    @apply text-xl font-bold;
+  }
+  
+  .text-mobile-subtitle {
+    @apply text-lg font-semibold;
+  }
+  
+  .text-mobile-body {
+    @apply text-base;
+  }
+  
+  .text-mobile-caption {
+    @apply text-sm;
   }
 
-  .gradient-bg {
-    @apply bg-gradient-mobile-bg;
+  /* White space utility */
+  .spacing-tight {
+    @apply space-y-2;
   }
-
-  .walmart-gradient {
-    @apply bg-gradient-walmart-subtle;
+  
+  .spacing-standard {
+    @apply space-y-4;
   }
-}
-
-@keyframes fadeIn {
-  to {
-    opacity: 1;
+  
+  .spacing-relaxed {
+    @apply space-y-6;
   }
-}
-
-@keyframes slideUp {
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-@keyframes scaleIn {
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-@keyframes pulse-glow {
-  0%, 100% {
-    box-shadow: 0 0 20px hsl(var(--primary) / 0.4);
-  }
-  50% {
-    box-shadow: 0 0 30px hsl(var(--primary) / 0.6);
-  }
-}
-
-@layer base {
-  * {
-    @apply border-border;
-  }
-
-  body {
-    @apply bg-background text-foreground;
+  
+  .spacing-loose {
+    @apply space-y-8;
   }
 }

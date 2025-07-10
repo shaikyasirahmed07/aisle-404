@@ -12,7 +12,9 @@
     "loading": "Loading...",
     "error": "Error",
     "success": "Success",
-    "welcome": "Welcome"
+    "welcome": "Welcome",
+    "selectLanguage": "Select your language",
+    "selectYourLanguage": "Please select your preferred language"
   },
   "auth": {
     "loginTitle": "Login to QR Retail",
@@ -26,7 +28,47 @@
     "verifyOtp": "Verify OTP",
     "loginError": "Login failed. Please check your credentials.",
     "otpSent": "OTP sent to your phone",
-    "invalidOtp": "Invalid OTP"
+    "invalidOtp": "Invalid OTP",
+    "sent": "Sent",
+    "enterOtp": "Enter OTP: {{otp}}",
+    "loginAsCustomer": "Login as Customer",
+    "demoOtp": "For demo, use OTP: {{otp}}",
+    "invalidCredentials": "Invalid credentials",
+    "checkCredentials": "Please check your employee ID and password",
+    "loginSuccess": "Logged in successfully as Store Manager",
+    "invalidPhone": "Invalid phone number",
+    "validPhone": "Please enter a valid 10-digit phone number",
+    "enterCorrectOtp": "Please enter the correct OTP",
+    "enterEmployeeId": "Enter your employee ID",
+    "enterPassword": "Enter your password",
+    "loginAsManager": "Login as Manager",
+    "enterPhoneNumber": "Enter your phone number",
+    "demoCredentials": "For demo, use ID: {{id}} and password: {{password}}"
+  },
+  "hero": {
+    "description": "Streamline your retail operations with our QR-based solution for inventory and customer management."
+  },
+  "features": {
+    "smartShopping": {
+      "title": "Smart Shopping",
+      "description": "Enhanced shopping experience with QR codes for product information and virtual cart management."
+    },
+    "inventoryManagement": {
+      "title": "Inventory Management",
+      "description": "Efficiently track and manage inventory with real-time updates and low stock alerts."
+    },
+    "dataAnalytics": {
+      "title": "Data Analytics",
+      "description": "Gain insights from comprehensive analytics on product performance and customer behavior."
+    }
+  },
+  "login": {
+    "welcomeBack": "Welcome Back",
+    "chooseRole": "Choose your role to continue"
+  },
+  "roles": {
+    "storeManager": "Store Manager",
+    "customer": "Customer"
   },
   "admin": {
     "dashboard": "Admin Dashboard",
@@ -42,7 +84,8 @@
     "editProduct": "Edit Product",
     "generateQR": "Generate QR Code",
     "downloadQR": "Download QR",
-    "createOffer": "Create Offer"
+    "createOffer": "Create Offer",
+    "dashboardOverview": "Dashboard Overview"
   },
   "customer": {
     "scanQR": "Scan QR Code",
@@ -55,7 +98,13 @@
     "budget": "Budget",
     "loyalty": "Loyalty Points",
     "navigation": "Navigation",
-    "takeMeThere": "Take Me There"
+    "takeMeThere": "Take Me There",
+    "welcomeNew": "Welcome! 🎉",
+    "firstPurchaseDiscount": "You get 5% off on your first purchase!",
+    "productScanned": "Product Scanned!",
+    "budgetReached": "Budget Alert!",
+    "budgetReachedDescription": "You've reached {{percentage}}% of your budget (₹{{amount}})",
+    "items": "items"
   },
   "product": {
     "name": "Product Name",

@@ -13,41 +13,45 @@ import {
   Plus,
   Search,
   Download,
-  Gift
+  Gift,
+  Globe
 } from 'lucide-react';
 import { mockProducts, mockAnalytics, mockComboOffers } from '@/data/mockData';
 import InventoryManagement from '@/components/admin/InventoryManagement';
 import QRCodeGeneration from '@/components/admin/QRCodeGeneration';
 import OfferSetup from '@/components/admin/OfferSetup';
 import AnalyticsDashboard from '@/components/admin/AnalyticsDashboard';
+import { useTranslation } from 'react-i18next';
+import LanguageSelector from '@/components/LanguageSelector';
 
 const AdminDashboard = () => {
   const { user, logout } = useAuth();
+  const { t } = useTranslation();
 
   const stats = [
     {
-      title: "Total Products",
+      title: t("admin.totalProducts"),
       value: mockAnalytics.totalProducts.toLocaleString(),
       icon: Package,
       color: "text-primary",
       bgColor: "bg-primary-light"
     },
     {
-      title: "Low Stock Alerts",
+      title: t("admin.lowStockAlerts"),
       value: mockAnalytics.lowStockAlerts,
       icon: AlertTriangle,
       color: "text-warning",
       bgColor: "bg-warning-light"
     },
     {
-      title: "Slow Moving Stock",
+      title: t("admin.slowMovingStock"),
       value: mockAnalytics.slowMovingStock,
       icon: TrendingDown,
       color: "text-destructive",
       bgColor: "bg-red-100"
     },
     {
-      title: "Upcoming Batches",
+      title: t("admin.upcomingBatches"),
       value: mockAnalytics.upcomingBatches,
       icon: Calendar,
       color: "text-success",
@@ -69,10 +73,11 @@ const AdminDashboard = () => {
             </div>
             <div className="flex items-center space-x-4">
               <span className="text-sm text-muted-foreground">
-                Welcome, {user?.name}
+                {t('common.welcome')}, {user?.name}
               </span>
+              <LanguageSelector />
               <Button variant="outline" onClick={logout}>
-                Logout
+                {t('common.logout')}
               </Button>
             </div>
           </div>
@@ -82,8 +87,8 @@ const AdminDashboard = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Dashboard Overview */}
         <div className="mb-8">
-          <h2 className="text-3xl font-bold text-foreground mb-2">Dashboard Overview</h2>
-          <p className="text-muted-foreground">Monitor your store performance and manage inventory</p>
+          <h2 className="text-3xl font-bold text-foreground mb-2">{t('admin.dashboardOverview')}</h2>
+          <p className="text-muted-foreground">{t('admin.monitorPerformance')}</p>
         </div>
 
         {/* Stats Grid */}
@@ -115,19 +120,19 @@ const AdminDashboard = () => {
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="analytics" className="flex items-center space-x-2">
               <BarChart3 className="w-4 h-4" />
-              <span>Analytics</span>
+              <span>{t('admin.analytics')}</span>
             </TabsTrigger>
             <TabsTrigger value="inventory" className="flex items-center space-x-2">
               <Package className="w-4 h-4" />
-              <span>Inventory</span>
+              <span>{t('admin.inventory')}</span>
             </TabsTrigger>
             <TabsTrigger value="qrcodes" className="flex items-center space-x-2">
               <QrCode className="w-4 h-4" />
-              <span>QR Codes</span>
+              <span>{t('admin.qrCodes')}</span>
             </TabsTrigger>
             <TabsTrigger value="offers" className="flex items-center space-x-2">
               <Gift className="w-4 h-4" />
-              <span>Offers</span>
+              <span>{t('admin.offers')}</span>
             </TabsTrigger>
           </TabsList>
 
