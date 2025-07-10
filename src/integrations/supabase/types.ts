@@ -14,7 +14,290 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      analytics: {
+        Row: {
+          date: string
+          slowmovingstock: Json | null
+          suggestions: string | null
+          topproducts: Json | null
+          totalearnings: number | null
+        }
+        Insert: {
+          date: string
+          slowmovingstock?: Json | null
+          suggestions?: string | null
+          topproducts?: Json | null
+          totalearnings?: number | null
+        }
+        Update: {
+          date?: string
+          slowmovingstock?: Json | null
+          suggestions?: string | null
+          topproducts?: Json | null
+          totalearnings?: number | null
+        }
+        Relationships: []
+      }
+      customers: {
+        Row: {
+          budgetthreshold: number | null
+          createdat: string | null
+          customerid: number
+          loyaltypoints: number | null
+          name: string | null
+          phonenumber: string
+        }
+        Insert: {
+          budgetthreshold?: number | null
+          createdat?: string | null
+          customerid?: number
+          loyaltypoints?: number | null
+          name?: string | null
+          phonenumber: string
+        }
+        Update: {
+          budgetthreshold?: number | null
+          createdat?: string | null
+          customerid?: number
+          loyaltypoints?: number | null
+          name?: string | null
+          phonenumber?: string
+        }
+        Relationships: []
+      }
+      products: {
+        Row: {
+          batchnumber: string | null
+          cartaddcount: number | null
+          category: string | null
+          discount: number | null
+          expirydate: string | null
+          isonpromotion: boolean | null
+          lastupdated: string | null
+          location: string | null
+          mrp: number | null
+          name: string
+          price: number
+          productid: string
+          qrgenerateddate: string | null
+          qrlink: string | null
+          restockthreshold: number | null
+          salecount: number | null
+          salesvelocity: number | null
+          scannedcount: number | null
+          shelfnumber: string | null
+          stockcount: number
+          supplierid: string | null
+          viewcount: number | null
+        }
+        Insert: {
+          batchnumber?: string | null
+          cartaddcount?: number | null
+          category?: string | null
+          discount?: number | null
+          expirydate?: string | null
+          isonpromotion?: boolean | null
+          lastupdated?: string | null
+          location?: string | null
+          mrp?: number | null
+          name: string
+          price: number
+          productid: string
+          qrgenerateddate?: string | null
+          qrlink?: string | null
+          restockthreshold?: number | null
+          salecount?: number | null
+          salesvelocity?: number | null
+          scannedcount?: number | null
+          shelfnumber?: string | null
+          stockcount: number
+          supplierid?: string | null
+          viewcount?: number | null
+        }
+        Update: {
+          batchnumber?: string | null
+          cartaddcount?: number | null
+          category?: string | null
+          discount?: number | null
+          expirydate?: string | null
+          isonpromotion?: boolean | null
+          lastupdated?: string | null
+          location?: string | null
+          mrp?: number | null
+          name?: string
+          price?: number
+          productid?: string
+          qrgenerateddate?: string | null
+          qrlink?: string | null
+          restockthreshold?: number | null
+          salecount?: number | null
+          salesvelocity?: number | null
+          scannedcount?: number | null
+          shelfnumber?: string | null
+          stockcount?: number
+          supplierid?: string | null
+          viewcount?: number | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          budgetthreshold: number | null
+          createdat: string | null
+          employeeid: string | null
+          id: string
+          loyaltypoints: number | null
+          name: string | null
+          phonenumber: string | null
+          role: string | null
+        }
+        Insert: {
+          budgetthreshold?: number | null
+          createdat?: string | null
+          employeeid?: string | null
+          id: string
+          loyaltypoints?: number | null
+          name?: string | null
+          phonenumber?: string | null
+          role?: string | null
+        }
+        Update: {
+          budgetthreshold?: number | null
+          createdat?: string | null
+          employeeid?: string | null
+          id?: string
+          loyaltypoints?: number | null
+          name?: string | null
+          phonenumber?: string | null
+          role?: string | null
+        }
+        Relationships: []
+      }
+      reviews: {
+        Row: {
+          comment: string | null
+          customerid: number | null
+          productid: string | null
+          rating: number | null
+          reviewid: number
+          timestamp: string | null
+          userid: string | null
+        }
+        Insert: {
+          comment?: string | null
+          customerid?: number | null
+          productid?: string | null
+          rating?: number | null
+          reviewid?: number
+          timestamp?: string | null
+          userid?: string | null
+        }
+        Update: {
+          comment?: string | null
+          customerid?: number | null
+          productid?: string | null
+          rating?: number | null
+          reviewid?: number
+          timestamp?: string | null
+          userid?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_customerid_fkey"
+            columns: ["customerid"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["customerid"]
+          },
+          {
+            foreignKeyName: "reviews_productid_fkey"
+            columns: ["productid"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["productid"]
+          },
+        ]
+      }
+      transactions: {
+        Row: {
+          customerid: number | null
+          productid: string | null
+          quantity: number
+          timestamp: string | null
+          totalprice: number
+          transactionid: number
+          userid: string | null
+        }
+        Insert: {
+          customerid?: number | null
+          productid?: string | null
+          quantity: number
+          timestamp?: string | null
+          totalprice: number
+          transactionid?: number
+          userid?: string | null
+        }
+        Update: {
+          customerid?: number | null
+          productid?: string | null
+          quantity?: number
+          timestamp?: string | null
+          totalprice?: number
+          transactionid?: number
+          userid?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transactions_customerid_fkey"
+            columns: ["customerid"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["customerid"]
+          },
+          {
+            foreignKeyName: "transactions_productid_fkey"
+            columns: ["productid"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["productid"]
+          },
+        ]
+      }
+      virtual_carts: {
+        Row: {
+          addedat: string | null
+          cartid: number
+          phonenumber: string | null
+          productid: string | null
+          quantity: number
+          userid: string | null
+        }
+        Insert: {
+          addedat?: string | null
+          cartid?: number
+          phonenumber?: string | null
+          productid?: string | null
+          quantity: number
+          userid?: string | null
+        }
+        Update: {
+          addedat?: string | null
+          cartid?: number
+          phonenumber?: string | null
+          productid?: string | null
+          quantity?: number
+          userid?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "virtual_carts_productid_fkey"
+            columns: ["productid"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["productid"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
