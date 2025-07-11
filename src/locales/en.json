@@ -1,0 +1,60 @@
+{
+  "common": {
+    "appName": "Aisle 404",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "back": "Back",
+    "next": "Next",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "view": "View",
+    "confirm": "Confirm"
+  },
+  "addToCart": "Add to Cart",
+  "takeMeThere": "Take me there",
+  "inStock": "{count} in stock",
+  "outOfStock": "Out of stock",
+  "saveAmount": "You save ₹{amount}",
+  "search": {
+    "title": "Product Search",
+    "description": "Find products and their locations in the store",
+    "placeholder": "Search for products... (e.g., toothpaste, milk, bread)",
+    "filters": "Filters",
+    "category": "Category",
+    "allCategories": "All Categories",
+    "sortBy": "Sort by",
+    "sortName": "Name A-Z",
+    "sortPriceLow": "Price: Low to High",
+    "sortPriceHigh": "Price: High to Low",
+    "sortRating": "Highest Rated",
+    "sortDiscount": "Best Discount",
+    "popularSearches": "Popular Searches",
+    "results": "Search Results",
+    "searchingFor": "Searching for",
+    "noResults": "No products found matching your search",
+    "tips": {
+      "title": "Search Tips",
+      "navigation": {
+        "title": "Quick Navigation",
+        "description": "Use \"Take me there\" to get directions to any product location"
+      },
+      "aisle": {
+        "title": "Aisle Information",
+        "description": "Each product shows its exact aisle location for easy finding"
+      },
+      "filters": {
+        "title": "Smart Filters",
+        "description": "Filter by category, price, rating, or discount to find exactly what you need"
+      }
+    }
+  },
+  "product": {
+    "discount": "{percent}% OFF",
+    "nearExpiry": "Near Expiry",
+    "popular": "Popular",
+    "fastMoving": "Fast Moving",
+    "aisle": "Aisle"
+  }
+}

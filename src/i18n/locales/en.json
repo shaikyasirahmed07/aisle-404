@@ -104,7 +104,12 @@
     "productScanned": "Product Scanned!",
     "budgetReached": "Budget Alert!",
     "budgetReachedDescription": "You've reached {{percentage}}% of your budget (₹{{amount}})",
-    "items": "items"
+    "items": "items",
+    "smartShopping": "Smart Shopping Experience",
+    "scanDescription": "Scan product QR codes to get detailed information and add items to your virtual cart",
+    "scan": "Scan",
+    "confirm": "Confirm",
+    "swipeToAddToCart": "Swipe left to add to cart"
   },
   "product": {
     "name": "Product Name",

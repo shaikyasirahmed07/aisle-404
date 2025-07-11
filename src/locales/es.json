@@ -1,0 +1,60 @@
+{
+  "common": {
+    "appName": "Pasillo 404",
+    "loading": "Cargando...",
+    "error": "Ocurrió un error",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "view": "Ver",
+    "confirm": "Confirmar"
+  },
+  "addToCart": "Añadir al carrito",
+  "takeMeThere": "Llévame allí",
+  "inStock": "{count} en stock",
+  "outOfStock": "Agotado",
+  "saveAmount": "Ahorras ₹{amount}",
+  "search": {
+    "title": "Búsqueda de productos",
+    "description": "Encuentra productos y sus ubicaciones en la tienda",
+    "placeholder": "Buscar productos... (ej., pasta dental, leche, pan)",
+    "filters": "Filtros",
+    "category": "Categoría",
+    "allCategories": "Todas las categorías",
+    "sortBy": "Ordenar por",
+    "sortName": "Nombre A-Z",
+    "sortPriceLow": "Precio: Menor a mayor",
+    "sortPriceHigh": "Precio: Mayor a menor",
+    "sortRating": "Mejor valorados",
+    "sortDiscount": "Mayor descuento",
+    "popularSearches": "Búsquedas populares",
+    "results": "Resultados de búsqueda",
+    "searchingFor": "Buscando",
+    "noResults": "No se encontraron productos que coincidan con tu búsqueda",
+    "tips": {
+      "title": "Consejos de búsqueda",
+      "navigation": {
+        "title": "Navegación rápida",
+        "description": "Usa \"Llévame allí\" para obtener direcciones a cualquier ubicación de producto"
+      },
+      "aisle": {
+        "title": "Información de pasillo",
+        "description": "Cada producto muestra su ubicación exacta en el pasillo para encontrarlo fácilmente"
+      },
+      "filters": {
+        "title": "Filtros inteligentes",
+        "description": "Filtra por categoría, precio, calificación o descuento para encontrar exactamente lo que necesitas"
+      }
+    }
+  },
+  "product": {
+    "discount": "{percent}% DESCUENTO",
+    "nearExpiry": "Próximo a caducar",
+    "popular": "Popular",
+    "fastMoving": "Alta demanda",
+    "aisle": "Pasillo"
+  }
+}

@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { 
@@ -14,10 +13,12 @@ import {
   CreditCard,
   Receipt,
   Target,
-  Percent
+  Clock,
+  Users
 } from 'lucide-react';
 import { Product } from '@/data/mockData';
 import { toast } from '@/hooks/use-toast';
+import { useTranslation } from 'react-i18next';
 
 interface VirtualCartProps {
   cartItems: {product: Product, quantity: number}[];
@@ -34,8 +35,11 @@ const VirtualCart: React.FC<VirtualCartProps> = ({
   setUserBudget,
   isFirstTime 
 }) => {
+  const { t } = useTranslation();
   const [showBudgetEdit, setShowBudgetEdit] = useState(false);
   const [newBudget, setNewBudget] = useState(userBudget.toString());
+  const [waitingTime, setWaitingTime] = useState(Math.floor(Math.random() * 8) + 2);
+  const [customersAhead, setCustomersAhead] = useState(Math.floor(Math.random() * 4) + 1);
 
   const updateQuantity = (productId: string, newQuantity: number) => {
     if (newQuantity <= 0) {
@@ -55,16 +59,16 @@ const VirtualCart: React.FC<VirtualCartProps> = ({
   const removeItem = (productId: string) => {
     setCartItems(prev => prev.filter(item => item.product.id !== productId));
     toast({
-      title: "Item removed",
-      description: "Item has been removed from your cart",
+      title: t("cart.itemRemoved"),
+      description: t("cart.itemRemovedDesc"),
     });
   };
 
   const clearCart = () => {
     setCartItems([]);
     toast({
-      title: "Cart cleared",
-      description: "All items have been removed from your cart",
+      title: t("cart.cartCleared"),
+      description: t("cart.cartClearedDesc"),
     });
   };
 
@@ -79,8 +83,8 @@ const VirtualCart: React.FC<VirtualCartProps> = ({
       setUserBudget(budget);
       setShowBudgetEdit(false);
       toast({
-        title: "Budget updated",
-        description: `Your budget has been set to ₹${budget}`,
+        title: t("cart.budgetUpdated"),
+        description: t("cart.budgetUpdatedDesc", { amount: budget }),
       });
     }
   };
@@ -88,28 +92,31 @@ const VirtualCart: React.FC<VirtualCartProps> = ({
   const handleCheckout = () => {
     if (cartItems.length === 0) {
       toast({
-        title: "Cart is empty",
-        description: "Add some items to your cart before checkout",
+        title: t("cart.emptyCart"),
+        description: t("cart.addItemsBeforeCheckout"),
         variant: "destructive",
       });
       return;
     }
 
-    // Calculate estimated waiting time based on queue
-    const customersAhead = Math.floor(Math.random() * 8) + 1; // 1-8 customers
-    const waitingTime = customersAhead * 2; // 2 minutes per customer
+    // Recalculate waiting time each time checkout is clicked
+    const newCustomersAhead = Math.floor(Math.random() * 8) + 1;
+    const newWaitingTime = newCustomersAhead * 2;
+    
+    setWaitingTime(newWaitingTime);
+    setCustomersAhead(newCustomersAhead);
 
     toast({
-      title: "Proceed to Checkout",
-      description: `Estimated waiting time: ${waitingTime} minutes (${customersAhead} customers ahead)`,
+      title: t("cart.proceedToCheckout"),
+      description: t("cart.waitingTimeEstimate", { minutes: newWaitingTime, customers: newCustomersAhead }),
       duration: 5000,
     });
   };
 
   const getBudgetStatus = () => {
-    if (budgetPercentage >= 100) return { color: 'text-destructive', bg: 'bg-destructive', message: 'Budget exceeded!' };
-    if (budgetPercentage >= 80) return { color: 'text-warning', bg: 'bg-warning', message: 'Approaching budget limit' };
-    return { color: 'text-success', bg: 'bg-success', message: 'Within budget' };
+    if (budgetPercentage >= 100) return { color: 'text-destructive', bg: 'bg-destructive', message: t('cart.budgetExceeded') };
+    if (budgetPercentage >= 80) return { color: 'text-warning', bg: 'bg-warning', message: t('cart.approachingBudget') };
+    return { color: 'text-success', bg: 'bg-success', message: t('cart.withinBudget') };
   };
 
   const budgetStatus = getBudgetStatus();
@@ -118,13 +125,13 @@ const VirtualCart: React.FC<VirtualCartProps> = ({
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h3 className="text-2xl font-bold text-foreground">Virtual Cart</h3>
-          <p className="text-muted-foreground">Review your items and manage your budget</p>
+          <h3 className="text-2xl font-bold text-foreground">{t('cart.virtualCart')}</h3>
+          <p className="text-muted-foreground">{t('cart.reviewYourItems')}</p>
         </div>
         {cartItems.length > 0 && (
           <Button variant="outline" onClick={clearCart}>
             <Trash className="w-4 h-4 mr-2" />
-            Clear Cart
+            {t('cart.clearCart')}
           </Button>
         )}
       </div>
@@ -135,14 +142,14 @@ const VirtualCart: React.FC<VirtualCartProps> = ({
           <CardTitle className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <Target className="w-5 h-5" />
-              <span>Budget Tracker</span>
+              <span>{t('cart.budgetTracker')}</span>
             </div>
             <Button 
               variant="outline" 
               size="sm"
               onClick={() => setShowBudgetEdit(!showBudgetEdit)}
             >
-              Edit Budget
+              {t('cart.editBudget')}
             </Button>
           </CardTitle>
         </CardHeader>
@@ -153,16 +160,16 @@ const VirtualCart: React.FC<VirtualCartProps> = ({
                 type="number"
                 value={newBudget}
                 onChange={(e) => setNewBudget(e.target.value)}
-                placeholder="Enter budget"
+                placeholder={t('cart.enterBudget')}
               />
-              <Button onClick={updateBudget} size="sm">Save</Button>
-              <Button variant="outline" size="sm" onClick={() => setShowBudgetEdit(false)}>Cancel</Button>
+              <Button onClick={updateBudget} size="sm">{t('common.save')}</Button>
+              <Button variant="outline" size="sm" onClick={() => setShowBudgetEdit(false)}>{t('common.cancel')}</Button>
             </div>
           ) : (
             <>
               <div className="flex justify-between items-center">
-                <span className="text-sm font-medium">Current: ₹{total.toFixed(2)}</span>
-                <span className="text-sm text-muted-foreground">Budget: ₹{userBudget}</span>
+                <span className="text-sm font-medium">{t('cart.current')}: ₹{total.toFixed(2)}</span>
+                <span className="text-sm text-muted-foreground">{t('cart.budget')}: ₹{userBudget}</span>
               </div>
               <Progress value={Math.min(budgetPercentage, 100)} className="h-3" />
               <div className={`text-sm font-medium ${budgetStatus.color}`}>
@@ -178,15 +185,15 @@ const VirtualCart: React.FC<VirtualCartProps> = ({
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <ShoppingCart className="w-5 h-5" />
-            <span>Cart Items ({cartItems.length})</span>
+            <span>{t('cart.cartItems')} ({cartItems.length})</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
           {cartItems.length === 0 ? (
             <div className="text-center py-8">
               <ShoppingCart className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground">Your cart is empty</p>
-              <p className="text-sm text-muted-foreground">Start scanning QR codes or search for products to add them</p>
+              <p className="text-muted-foreground">{t('cart.emptyCartMessage')}</p>
+              <p className="text-sm text-muted-foreground">{t('cart.startScanning')}</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -199,7 +206,7 @@ const VirtualCart: React.FC<VirtualCartProps> = ({
                       <span className="text-lg font-bold text-primary">₹{item.product.price}</span>
                       {item.product.discount > 0 && (
                         <Badge variant="secondary" className="bg-success-light text-success">
-                          {item.product.discount}% OFF
+                          {item.product.discount}% {t('product.off')}
                         </Badge>
                       )}
                     </div>
@@ -246,13 +253,13 @@ const VirtualCart: React.FC<VirtualCartProps> = ({
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <Receipt className="w-5 h-5" />
-              <span>Cart Summary</span>
+              <span>{t('cart.cartSummary')}</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <div className="flex justify-between">
-                <span>Subtotal ({cartItems.reduce((sum, item) => sum + item.quantity, 0)} items)</span>
+                <span>{t('cart.subtotal')} ({cartItems.reduce((sum, item) => sum + item.quantity, 0)} {t('customer.items')})</span>
                 <span>₹{subtotal.toFixed(2)}</span>
               </div>
               
@@ -260,7 +267,7 @@ const VirtualCart: React.FC<VirtualCartProps> = ({
                 <div className="flex justify-between text-success">
                   <span className="flex items-center space-x-1">
                     <Gift className="w-4 h-4" />
-                    <span>First-time discount (5%)</span>
+                    <span>{t('cart.firstTimeDiscount')} (5%)</span>
                   </span>
                   <span>-₹{firstTimeDiscount.toFixed(2)}</span>
                 </div>
@@ -268,37 +275,42 @@ const VirtualCart: React.FC<VirtualCartProps> = ({
               
               <div className="border-t pt-2">
                 <div className="flex justify-between font-bold text-lg">
-                  <span>Total</span>
+                  <span>{t('cart.total')}</span>
                   <span className="text-primary">₹{total.toFixed(2)}</span>
                 </div>
               </div>
               
               {budgetPercentage > 100 && (
                 <div className="text-sm text-destructive">
-                  Over budget by ₹{(total - userBudget).toFixed(2)}
+                  {t('cart.overBudget')} ₹{(total - userBudget).toFixed(2)}
                 </div>
               )}
             </div>
             
             <div className="space-y-3">
-              <div className="text-center p-3 bg-secondary-light rounded-lg">
-                <div className="text-sm font-medium text-secondary">Estimated Waiting Time</div>
-                <div className="text-lg font-bold text-foreground">
-                  {Math.floor(Math.random() * 8) + 2} minutes
+              {/* Waiting Time Indicator */}
+              <div className="text-center p-4 bg-secondary-light rounded-lg">
+                <div className="text-sm font-medium text-secondary">{t('cart.estimatedWaitingTime')}</div>
+                <div className="flex items-center justify-center gap-2 mt-1">
+                  <Clock className="w-5 h-5 text-secondary animate-pulse" />
+                  <div className="text-lg font-bold text-foreground">
+                    {waitingTime} {t('cart.minutes')}
+                  </div>
                 </div>
-                <div className="text-xs text-muted-foreground">
-                  {Math.floor(Math.random() * 4) + 1} customers ahead in queue
+                <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground mt-1">
+                  <Users className="w-3 h-3" />
+                  <span>{customersAhead} {t('cart.customersAhead')}</span>
                 </div>
               </div>
               
-              <Button className="w-full btn-primary" onClick={handleCheckout}>
+              <Button className="w-full bg-primary text-white" onClick={handleCheckout}>
                 <CreditCard className="w-4 h-4 mr-2" />
-                Proceed to Checkout
+                {t('cart.proceedToCheckout')}
               </Button>
             </div>
             
             <div className="text-xs text-muted-foreground text-center">
-              Note: This is a virtual cart. Actual payment will be processed at the checkout counter.
+              {t('cart.virtualCartNote')}
             </div>
           </CardContent>
         </Card>
@@ -307,24 +319,24 @@ const VirtualCart: React.FC<VirtualCartProps> = ({
       {/* Cart Tips */}
       <Card className="card-retail bg-secondary-light border-secondary/20">
         <CardHeader>
-          <CardTitle className="text-secondary">Shopping Tips</CardTitle>
+          <CardTitle className="text-secondary">{t('cart.shoppingTips')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="flex items-start space-x-3">
             <Target className="w-5 h-5 text-secondary mt-0.5" />
             <div>
-              <p className="font-medium text-foreground">Budget Management</p>
+              <p className="font-medium text-foreground">{t('cart.budgetManagement')}</p>
               <p className="text-sm text-muted-foreground">
-                Set and track your budget to stay within your spending limits
+                {t('cart.budgetManagementDesc')}
               </p>
             </div>
           </div>
           <div className="flex items-start space-x-3">
             <Receipt className="w-5 h-5 text-secondary mt-0.5" />
             <div>
-              <p className="font-medium text-foreground">Virtual Cart</p>
+              <p className="font-medium text-foreground">{t('cart.virtualCartTip')}</p>
               <p className="text-sm text-muted-foreground">
-                Your virtual cart helps you track items and estimated total before checkout
+                {t('cart.virtualCartTipDesc')}
               </p>
             </div>
           </div>
@@ -332,9 +344,9 @@ const VirtualCart: React.FC<VirtualCartProps> = ({
             <div className="flex items-start space-x-3">
               <Gift className="w-5 h-5 text-secondary mt-0.5" />
               <div>
-                <p className="font-medium text-foreground">First-time Bonus</p>
+                <p className="font-medium text-foreground">{t('cart.firstTimeBonus')}</p>
                 <p className="text-sm text-muted-foreground">
-                  Enjoy 5% off on your first purchase! Discount applied automatically.
+                  {t('cart.firstTimeBonusDesc')}
                 </p>
               </div>
             </div>

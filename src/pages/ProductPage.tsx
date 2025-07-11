@@ -3,9 +3,11 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Star, MapPin, ShoppingCart, ArrowLeft, Phone } from 'lucide-react';
+import { Star, MapPin, ShoppingCart, ArrowLeft, Phone, Heart, MessageCircle, Share2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
+import { Input } from '@/components/ui/input';
+import { useTranslation } from 'react-i18next';
 
 interface Product {
   productid: string;
@@ -25,10 +27,13 @@ interface Product {
 const ProductPage = () => {
   const { productId } = useParams();
   const navigate = useNavigate();
+  const { t } = useTranslation();
+  
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [phoneNumber, setPhoneNumber] = useState('');
   const [showPhoneInput, setShowPhoneInput] = useState(false);
+  const [liked, setLiked] = useState(false);
 
   useEffect(() => {
     if (productId) {
@@ -50,8 +55,8 @@ const ProductPage = () => {
     } catch (error) {
       console.error('Error fetching product:', error);
       toast({
-        title: "Product not found",
-        description: "The scanned product could not be found",
+        title: t("product.notFound"),
+        description: t("product.scannedProductNotFound"),
         variant: "destructive",
       });
     } finally {
@@ -62,9 +67,19 @@ const ProductPage = () => {
   const updateViewCount = async () => {
     try {
       if (productId) {
+        const { data, error } = await supabase
+          .from('products')
+          .select('viewcount')
+          .eq('productid', productId)
+          .single();
+
+        if (error) throw error;
+
+        const newViewCount = (data.viewcount || 0) + 1;
+        
         await supabase
           .from('products')
-          .update({ viewcount: (product?.viewcount || 0) + 1 })
+          .update({ viewcount: newViewCount })
           .eq('productid', productId);
       }
     } catch (error) {
@@ -73,50 +88,70 @@ const ProductPage = () => {
   };
 
   const handleAddToCart = async () => {
-    if (!phoneNumber) {
+    if (!phoneNumber && !showPhoneInput) {
       setShowPhoneInput(true);
       return;
     }
 
+    if (!phoneNumber) {
+      toast({
+        title: t("cart.phoneRequired"),
+        description: t("cart.enterPhoneToAddToCart"),
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (phoneNumber.length !== 10 || isNaN(Number(phoneNumber))) {
+      toast({
+        title: t("cart.invalidPhone"),
+        description: t("cart.enterValidPhone"),
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
-      const { error } = await supabase
-        .from('virtual_carts')
-        .insert({
-          productid: productId,
-          phonenumber: phoneNumber,
-          quantity: 1
+      if (product) {
+        // Update cart count in database
+        const { error: cartError } = await supabase
+          .from('products')
+          .update({ 
+            cartaddcount: (product.cartaddcount || 0) + 1 
+          })
+          .eq('productid', productId);
+
+        if (cartError) throw cartError;
+
+        // In a real app, we would add this to the user's cart in the database
+        toast({
+          title: t("cart.addedToCart"),
+          description: `${product.name} - ₹${product.price}`,
         });
 
-      if (error) throw error;
-
-      // Update cart add count
-      if (productId) {
-        await supabase
-          .from('products')
-          .update({ cartaddcount: (product?.cartaddcount || 0) + 1 })
-          .eq('productid', productId);
+        // Reset after adding to cart
+        setShowPhoneInput(false);
       }
-
-      toast({
-        title: "Added to Cart",
-        description: `${product?.name} added to your virtual cart`,
-      });
     } catch (error) {
       console.error('Error adding to cart:', error);
       toast({
-        title: "Error",
-        description: "Could not add item to cart",
+        title: t("cart.addToCartError"),
+        description: t("cart.tryAgain"),
         variant: "destructive",
       });
     }
   };
 
+  const handleGoBack = () => {
+    navigate(-1);
+  };
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white flex items-center justify-center">
+      <div className="min-h-screen flex justify-center items-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading product...</p>
+          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto"></div>
+          <p className="mt-4">{t("common.loading")}</p>
         </div>
       </div>
     );
@@ -124,145 +159,177 @@ const ProductPage = () => {
 
   if (!product) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white flex items-center justify-center">
+      <div className="min-h-screen p-6 flex flex-col justify-center items-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-800 mb-4">Product Not Found</h1>
-          <Button onClick={() => navigate('/')} className="bg-blue-600 hover:bg-blue-700">
+          <h1 className="text-2xl font-bold mb-2">{t("product.notFound")}</h1>
+          <p className="text-muted-foreground mb-6">{t("product.scannedProductNotFound")}</p>
+          <Button onClick={handleGoBack}>
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Go Home
+            {t("common.goBack")}
           </Button>
         </div>
       </div>
     );
   }
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white p-4">
-      <div className="max-w-2xl mx-auto">
-        {/* Header */}
-        <div className="flex items-center mb-6">
-          <Button 
-            variant="ghost" 
-            onClick={() => navigate('/')}
-            className="mr-4"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back
-          </Button>
-          <h1 className="text-2xl font-bold text-gray-800">Product Details</h1>
-        </div>
+  // Random engagement metrics for demo
+  const likes = Math.floor(Math.random() * 5000) + 100;
+  const comments = Math.floor(Math.random() * 800) + 20;
+  const formattedLikes = likes > 1000 ? `${(likes / 1000).toFixed(1)}K` : likes;
 
-        {/* Product Card */}
-        <Card className="mb-6 shadow-lg">
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              <span className="text-xl">{product.name}</span>
-              <Badge variant="outline" className="flex items-center space-x-1">
-                <MapPin className="w-3 h-3" />
-                <span>{product.location}</span>
-              </Badge>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {/* Pricing */}
-            <div className="space-y-2">
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Top Navigation */}
+      <div className="sticky top-0 z-10 bg-card/90 backdrop-blur-sm border-b border-border p-4 flex justify-between items-center">
+        <Button variant="ghost" size="sm" onClick={handleGoBack}>
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          {t("common.back")}
+        </Button>
+        <h1 className="text-lg font-bold text-foreground truncate max-w-[200px]">
+          {product.name}
+        </h1>
+        <Button variant="ghost" size="sm" onClick={() => setLiked(!liked)}>
+          <Heart className={`w-5 h-5 ${liked ? 'fill-red-500 text-red-500' : ''}`} />
+        </Button>
+      </div>
+
+      <div className="container mx-auto p-6 max-w-3xl">
+        {/* Product Main Card */}
+        <Card className="mb-6 overflow-hidden">
+          {/* Product Image */}
+          <div className="h-64 bg-muted flex items-center justify-center">
+            <div className="w-40 h-40 bg-white/80 rounded-lg flex items-center justify-center p-4">
+              <span className="text-xl font-medium text-gray-500">{product.name}</span>
+            </div>
+          </div>
+
+          <CardContent className="p-6">
+            <div className="flex flex-col space-y-4">
+              {/* Product Title and Category */}
+              <div>
+                <h2 className="text-2xl font-bold">{product.name}</h2>
+                <div className="flex items-center mt-1">
+                  <Badge variant="outline" className="mr-2">
+                    {product.category}
+                  </Badge>
+                  <Badge variant="outline" className="flex items-center">
+                    <MapPin className="w-3 h-3 mr-1" />
+                    {product.location}
+                  </Badge>
+                </div>
+              </div>
+
+              {/* Pricing */}
               <div className="flex items-center space-x-3">
-                <span className="text-2xl font-bold text-green-600">₹{product.price}</span>
+                <span className="text-3xl font-bold text-primary">₹{product.price}</span>
                 {product.discount > 0 && (
                   <>
-                    <span className="text-lg text-gray-400 line-through">₹{product.mrp}</span>
-                    <Badge variant="secondary" className="bg-red-100 text-red-700">
-                      {product.discount}% OFF
+                    <span className="text-xl text-muted-foreground line-through">₹{product.mrp}</span>
+                    <Badge variant="secondary" className="bg-green-100 text-green-700">
+                      {product.discount}% {t('product.off')}
                     </Badge>
                   </>
                 )}
               </div>
-              <div className="text-sm text-gray-600">
-                MRP: ₹{product.mrp} • You save ₹{(product.mrp || 0) - product.price}
-              </div>
-            </div>
 
-            {/* Product Info */}
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div>
-                <span className="text-gray-600">Category:</span>
-                <p className="font-medium">{product.category}</p>
-              </div>
-              <div>
-                <span className="text-gray-600">Stock:</span>
-                <p className={`font-medium ${product.stockcount > 10 ? 'text-green-600' : 'text-orange-600'}`}>
-                  {product.stockcount} available
-                </p>
-              </div>
-            </div>
-
-            {/* Location */}
-            <Card className="bg-blue-50 border-blue-200">
-              <CardContent className="p-4">
-                <div className="flex items-center space-x-2 mb-2">
-                  <MapPin className="w-5 h-5 text-blue-600" />
-                  <span className="font-medium text-blue-800">Location</span>
-                </div>
-                <p className="text-sm text-blue-700">
-                  Find this product at: <strong>{product.location}</strong>
-                </p>
-              </CardContent>
-            </Card>
-
-            {/* Phone Input for Cart */}
-            {showPhoneInput && (
-              <Card className="bg-yellow-50 border-yellow-200">
-                <CardContent className="p-4">
-                  <div className="flex items-center space-x-2 mb-3">
-                    <Phone className="w-5 h-5 text-yellow-600" />
-                    <span className="font-medium text-yellow-800">Add to Virtual Cart</span>
+              {/* Rating and Stats */}
+              <div className="flex items-center space-x-6 border-y py-3">
+                <div className="flex items-center">
+                  <div className="flex">
+                    {[...Array(5)].map((_, i) => (
+                      <Star 
+                        key={i} 
+                        className={`w-4 h-4 ${
+                          i < 4 // Mock 4-star rating
+                            ? 'text-yellow-400 fill-current' 
+                            : 'text-gray-300'
+                        }`} 
+                      />
+                    ))}
                   </div>
+                  <span className="text-sm font-medium ml-1">4.0</span>
+                </div>
+                
+                <div className="flex items-center">
+                  <Heart className="w-4 h-4 text-gray-500 mr-1" />
+                  <span className="text-sm">{formattedLikes}</span>
+                </div>
+                
+                <div className="flex items-center">
+                  <MessageCircle className="w-4 h-4 text-gray-500 mr-1" />
+                  <span className="text-sm">{comments}</span>
+                </div>
+                
+                <div className="flex items-center">
+                  <Share2 className="w-4 h-4 text-gray-500 mr-1" />
+                  <span className="text-sm">{t('product.share')}</span>
+                </div>
+              </div>
+
+              {/* Stock Status */}
+              <div>
+                <div className="flex justify-between">
+                  <span className="text-sm">{t('product.availability')}</span>
+                  <span className="text-sm font-medium">
+                    {product.stockcount > 0 
+                      ? `${product.stockcount} ${t('product.inStock')}` 
+                      : t('product.outOfStock')}
+                  </span>
+                </div>
+                <div className="flex justify-between mt-1">
+                  <span className="text-sm">{t('product.expiry')}</span>
+                  <span className="text-sm font-medium">
+                    {new Date(product.expirydate).toLocaleDateString()}
+                  </span>
+                </div>
+              </div>
+
+              {/* Description */}
+              {product.description && (
+                <div className="border-t pt-4">
+                  <h3 className="font-medium mb-2">{t('product.description')}</h3>
+                  <p className="text-muted-foreground text-sm">{product.description}</p>
+                </div>
+              )}
+
+              {/* Phone Input for Cart */}
+              {showPhoneInput && (
+                <div className="border-t pt-4 space-y-3">
+                  <label htmlFor="phone-input" className="text-sm font-medium">
+                    {t('cart.enterPhoneForCart')}
+                  </label>
                   <div className="flex space-x-2">
-                    <input
+                    <Input
+                      id="phone-input"
                       type="tel"
-                      placeholder="Enter phone number"
                       value={phoneNumber}
                       onChange={(e) => setPhoneNumber(e.target.value)}
-                      className="flex-1 px-3 py-2 border border-yellow-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                      placeholder="1234567890"
                       maxLength={10}
+                      className="flex-1"
                     />
-                    <Button 
-                      onClick={handleAddToCart}
-                      disabled={phoneNumber.length !== 10}
-                      className="bg-yellow-600 hover:bg-yellow-700"
-                    >
-                      Add
+                    <Button variant="outline" onClick={() => setShowPhoneInput(false)}>
+                      {t('common.cancel')}
                     </Button>
                   </div>
-                  <p className="text-xs text-yellow-700 mt-2">
-                    We'll link your cart to this number for easy checkout
-                  </p>
-                </CardContent>
-              </Card>
-            )}
+                </div>
+              )}
 
-            {/* Add to Cart Button */}
-            <Button 
-              onClick={handleAddToCart}
-              className="w-full bg-green-600 hover:bg-green-700 text-white"
-              disabled={product.stockcount === 0}
-            >
-              <ShoppingCart className="w-4 h-4 mr-2" />
-              {product.stockcount === 0 ? 'Out of Stock' : 'Add to Virtual Cart'}
-            </Button>
-
-            {/* Customer Interface Link */}
-            <div className="text-center">
+              {/* Add to Cart Button */}
               <Button 
-                variant="outline" 
-                onClick={() => navigate('/customer')}
-                className="text-blue-600 border-blue-600 hover:bg-blue-50"
+                className="w-full mt-4 bg-primary text-white" 
+                size="lg"
+                onClick={handleAddToCart}
+                disabled={product.stockcount <= 0}
               >
-                Continue Shopping
+                <ShoppingCart className="w-5 h-5 mr-2" />
+                {t('customer.addToCart')}
               </Button>
             </div>
           </CardContent>
         </Card>
+
+        {/* Related Products would go here */}
       </div>
     </div>
   );
