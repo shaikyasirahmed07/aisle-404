@@ -122,7 +122,10 @@
     "batch": "Batch Number",
     "expiry": "Expiry Date",
     "ecoFriendly": "Eco-Friendly",
-    "onPromotion": "On Promotion"
+    "onPromotion": "On Promotion",
+    "availability": "Availability",
+    "inStock": "in stock",
+    "outOfStock": "Out of stock"
   },
   "navigation": {
     "home": "Home",

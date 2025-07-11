@@ -16,6 +16,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { Product, QRCodeData } from '@/types/product';
 import { useIsMobile } from '@/hooks/use-mobile';
 
+const QRCODER_API_KEY = "tFSprcBKDHhExbl3u2namg8qQve41jAO";
+const QRCODER_API_URL = "https://www.qrcoder.co.uk/api/v4/";
+
+const WALMART_QR_COLORS = {
+  background: "FFFFFF", // white
+  foreground: "0071CE", // Walmart blue
+  eo: "FFC220",         // Walmart yellow (eye outer)
+  ei: "0071CE",         // Walmart blue (eye inner)
+};
+
 // QR Code field options for selection
 const QR_FIELD_OPTIONS = [
   { id: 'productId', label: 'Product ID', required: true },
@@ -32,6 +42,42 @@ const QR_FIELD_OPTIONS = [
   { id: 'offerId', label: 'Offer ID' },
 ];
 
+function buildQrApiUrl({
+  text,
+  type = "SVG",
+  background = WALMART_QR_COLORS.background,
+  foreground = WALMART_QR_COLORS.foreground,
+  eo = WALMART_QR_COLORS.eo,
+  ei = WALMART_QR_COLORS.ei,
+  size = 256,
+  padding = 4,
+  file = false,
+}: {
+  text: string;
+  type?: "SVG" | "PNG";
+  background?: string;
+  foreground?: string;
+  eo?: string;
+  ei?: string;
+  size?: number;
+  padding?: number;
+  file?: boolean;
+}) {
+  const params = new URLSearchParams({
+    key: QRCODER_API_KEY,
+    type,
+    text: encodeURIComponent(text),
+    background,
+    foreground,
+    eo,
+    ei,
+    size: String(size),
+    padding: String(padding),
+    ...(file ? { file: "true" } : {}),
+  });
+  return `${QRCODER_API_URL}?${params.toString()}`;
+}
+
 const QRCodeGeneration = () => {
   const { t } = useTranslation();
   const isMobile = useIsMobile();
@@ -40,8 +86,13 @@ const QRCodeGeneration = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
   const [selectedFields, setSelectedFields] = useState<string[]>(['productId', 'name', 'price']);
-  const [qrCodeTemplate, setQRCodeTemplate] = useState<string>('standard');
-  const [qrSize, setQrSize] = useState<string>('medium');
+  const [qrType, setQrType] = useState<"SVG" | "PNG">("SVG");
+  const [qrBg, setQrBg] = useState(WALMART_QR_COLORS.background);
+  const [qrFg, setQrFg] = useState(WALMART_QR_COLORS.foreground);
+  const [qrEo, setQrEo] = useState(WALMART_QR_COLORS.eo);
+  const [qrEi, setQrEi] = useState(WALMART_QR_COLORS.ei);
+  const [qrSize, setQrSize] = useState<number>(256);
+  const [qrPadding, setQrPadding] = useState<number>(4);
   const [showQrPreview, setShowQrPreview] = useState<boolean>(false);
   const [previewProduct, setPreviewProduct] = useState<Product | null>(null);
 
@@ -157,108 +208,82 @@ const QRCodeGeneration = () => {
     return qrData as QRCodeData;
   };
 
-  // QR Code Preview Component
-  const QRCodePreview = ({ product, size }: { product: Product, size: string }) => {
-    // Size classes based on selection
-    const sizeClasses = {
-      small: 'w-20 h-20',
-      medium: 'w-32 h-32',
-      large: 'w-48 h-48',
-      xl: 'w-64 h-64',
-    }[size] || 'w-32 h-32';
-    
-    // Generate selected fields for display
-    const fields = selectedFields.map(field => {
-      const value = (product as any)[field];
-      const label = QR_FIELD_OPTIONS.find(opt => opt.id === field)?.label || field;
-      return { label, value };
+  // Generate QR code text from product fields
+  function getQrText(product: Product) {
+    // You can customize this to include any product fields
+    return [
+      `Product: ${product.name}`,
+      `ID: ${product.productId}`,
+      `Price: ₹${product.price}`,
+      `Discount: ${product.discount}%`,
+      `Category: ${product.category}`,
+      `Location: ${product.location}`,
+      `Expiry: ${product.expiryDate}`,
+      `EcoFriendly: ${product.isEcoFriendly ? "Yes" : "No"}`,
+      `OnPromotion: ${product.isOnPromotion ? "Yes" : "No"}`,
+    ].join(" | ");
+  }
+
+  // QR Code Preview Component using API
+  const QRCodePreview = ({ product }: { product: Product }) => {
+    const qrUrl = buildQrApiUrl({
+      text: getQrText(product),
+      type: qrType,
+      background: qrBg,
+      foreground: qrFg,
+      eo: qrEo,
+      ei: qrEi,
+      size: qrSize,
+      padding: qrPadding,
     });
 
     return (
       <div className="flex flex-col items-center gap-4">
-        <div className={`${sizeClasses} bg-white p-2 rounded shadow-soft flex items-center justify-center`}>
-          <div className="relative w-full h-full bg-primary/5 border border-primary/20 rounded grid grid-cols-4 grid-rows-4 gap-[2px] overflow-hidden">
-            {/* Generate QR code pattern */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <QrCode className="text-primary opacity-60" size={size === 'small' ? 36 : 48} />
-            </div>
-            {/* Corners */}
-            <div className="col-span-1 row-span-1 bg-primary rounded-tl-sm"></div>
-            <div className="col-span-1 row-span-1 col-start-4 bg-primary rounded-tr-sm"></div>
-            <div className="col-span-1 row-span-1 row-start-4 bg-primary rounded-bl-sm"></div>
-            {/* Center */}
-            <div className="col-start-2 row-start-2 col-span-2 row-span-2 bg-white border-2 border-primary flex items-center justify-center rounded">
-              <span className="text-[8px] font-bold text-primary/70">
-                {product.productId.substring(0, 6)}
-              </span>
-            </div>
-            {/* Random QR bits */}
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div
-                key={i}
-                className={`col-span-1 row-span-1 col-start-${Math.floor(Math.random() * 4) + 1} row-start-${Math.floor(Math.random() * 4) + 1} bg-primary/80 rounded-sm`}
-                style={{ 
-                  gridColumnStart: Math.floor(Math.random() * 4) + 1,
-                  gridRowStart: Math.floor(Math.random() * 4) + 1
-                }}
-              ></div>
-            ))}
-          </div>
-        </div>
-        
+        {qrType === "SVG" ? (
+          <object type="image/svg+xml" data={qrUrl} className="w-48 h-48" aria-label="QR Code" />
+        ) : (
+          <img src={qrUrl} alt="QR Code" className="w-48 h-48" />
+        )}
         <div className="text-center">
           <h4 className="font-semibold">{product.name}</h4>
           <p className="text-sm text-muted-foreground">ID: {product.productId}</p>
         </div>
-        
-        <div className="w-full max-w-xs space-y-2 mt-2">
-          <h5 className="text-sm font-medium border-b pb-1">{t("Included Information")}</h5>
-          <div className="text-sm space-y-1 max-h-36 overflow-y-auto">
-            {fields.map((field, index) => (
-              <div key={index} className="flex justify-between">
-                <span className="text-muted-foreground">{field.label}:</span>
-                <span className="font-medium truncate max-w-[150px]">{
-                  typeof field.value === 'boolean' 
-                    ? field.value ? 'Yes' : 'No' 
-                    : field.value?.toString() || '-'
-                }</span>
-              </div>
-            ))}
-          </div>
-        </div>
-        
-        <div className="flex gap-2 mt-4">
-          <Button variant="outline" size="sm">
-            <Printer className="w-4 h-4 mr-1" />
-            {t("Print")}
-          </Button>
-          <Button size="sm">
-            <Download className="w-4 h-4 mr-1" />
-            {t("Download")}
-          </Button>
-        </div>
+        <Button
+          size="sm"
+          onClick={() => window.open(buildQrApiUrl({
+            text: getQrText(product),
+            type: qrType,
+            background: qrBg,
+            foreground: qrFg,
+            eo: qrEo,
+            ei: qrEi,
+            size: qrSize,
+            padding: qrPadding,
+            file: true,
+          }), "_blank")}
+        >
+          {t("Download QR")}
+        </Button>
       </div>
     );
   };
 
   // Mock QR code thumbnail component
-  const QRCodeDisplay = ({ product }: { product: Product }) => (
-    <div className="w-16 h-16 bg-white flex items-center justify-center rounded border">
-      <div className="w-12 h-12 bg-background rounded grid grid-cols-3 grid-rows-3 gap-px">
-        <div className="col-span-1 row-span-1 bg-primary rounded-tl-sm"></div>
-        <div className="col-span-1 row-span-1 bg-background"></div>
-        <div className="col-span-1 row-span-1 bg-primary rounded-tr-sm"></div>
-        <div className="col-span-1 row-span-1 bg-background"></div>
-        <div className="col-span-1 row-span-1 bg-foreground flex items-center justify-center">
-          <span className="text-[6px] font-bold text-background">{product.productId.substring(0, 3)}</span>
-        </div>
-        <div className="col-span-1 row-span-1 bg-background"></div>
-        <div className="col-span-1 row-span-1 bg-primary rounded-bl-sm"></div>
-        <div className="col-span-1 row-span-1 bg-background"></div>
-        <div className="col-span-1 row-span-1 bg-foreground"></div>
-      </div>
-    </div>
-  );
+  const QRCodeDisplay = ({ product }: { product: Product }) => {
+    const qrUrl = buildQrApiUrl({
+      text: getQrText(product),
+      type: "SVG",
+      background: qrBg,
+      foreground: qrFg,
+      eo: qrEo,
+      ei: qrEi,
+      size: 64,
+      padding: 2,
+    });
+    return (
+      <object type="image/svg+xml" data={qrUrl} className="w-12 h-12" aria-label="QR Code" />
+    );
+  };
 
   return (
     <div className={`space-y-6 ${isMobile ? 'px-4' : ''}`}>
@@ -320,16 +345,15 @@ const QRCodeGeneration = () => {
                   <div>
                     <label htmlFor="qr-template" className="text-sm font-medium">{t("QR Template")}</label>
                     <Select
-                      value={qrCodeTemplate}
-                      onValueChange={setQRCodeTemplate}
+                      value={qrType}
+                      onValueChange={(val) => setQrType(val as "SVG" | "PNG")}
                     >
                       <SelectTrigger id="qr-template" className="mt-1">
                         <SelectValue placeholder={t("Select template")} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="standard">{t("Standard")}</SelectItem>
-                        <SelectItem value="branded">{t("Branded")}</SelectItem>
-                        <SelectItem value="minimal">{t("Minimal")}</SelectItem>
+                        <SelectItem value="SVG">{t("SVG")}</SelectItem>
+                        <SelectItem value="PNG">{t("PNG")}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -337,17 +361,17 @@ const QRCodeGeneration = () => {
                   <div>
                     <label htmlFor="qr-size" className="text-sm font-medium">{t("QR Code Size")}</label>
                     <Select
-                      value={qrSize}
-                      onValueChange={setQrSize}
+                      value={String(qrSize)}
+                      onValueChange={(val) => setQrSize(Number(val))}
                     >
                       <SelectTrigger id="qr-size" className="mt-1">
                         <SelectValue placeholder={t("Select size")} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="small">{t("Small")}</SelectItem>
-                        <SelectItem value="medium">{t("Medium")}</SelectItem>
-                        <SelectItem value="large">{t("Large")}</SelectItem>
-                        <SelectItem value="xl">{t("Extra Large")}</SelectItem>
+                        <SelectItem value="64">{t("Small")}</SelectItem>
+                        <SelectItem value="128">{t("Medium")}</SelectItem>
+                        <SelectItem value="256">{t("Large")}</SelectItem>
+                        <SelectItem value="512">{t("Extra Large")}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -589,7 +613,7 @@ const QRCodeGeneration = () => {
           
           {previewProduct && (
             <div className="flex justify-center py-4">
-              <QRCodePreview product={previewProduct} size={qrSize} />
+              <QRCodePreview product={previewProduct} />
             </div>
           )}
         </DialogContent>

@@ -279,7 +279,9 @@ const ProductPage = () => {
                 <div className="flex justify-between mt-1">
                   <span className="text-sm">{t('product.expiry')}</span>
                   <span className="text-sm font-medium">
-                    {new Date(product.expirydate).toLocaleDateString()}
+                    {product.expirydate
+                      ? new Date(product.expirydate).toLocaleDateString()
+                      : "-"}
                   </span>
                 </div>
               </div>

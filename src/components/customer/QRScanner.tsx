@@ -220,6 +220,20 @@ const QRScanner: React.FC<QRScannerProps> = ({ onProductScan, onAddToCart, t: tP
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
+            <div className="flex justify-between text-xs text-muted-foreground">
+              <span>
+                {translate("product.availability")}:{" "}
+                {scannedProduct.stockCount > 0
+                  ? `${scannedProduct.stockCount} ${translate("product.inStock")}`
+                  : translate("product.outOfStock")}
+              </span>
+              <span>
+                {translate("product.expiry")}:{" "}
+                {scannedProduct.expiryDate
+                  ? new Date(scannedProduct.expiryDate).toLocaleDateString()
+                  : "-"}
+              </span>
+            </div>
             <ProductCard 
               product={scannedProduct} 
               onAddToCart={onAddToCart}

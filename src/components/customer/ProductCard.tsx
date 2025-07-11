@@ -202,6 +202,22 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, t: tPro
             </Button>
           </div>
           
+          {/* Availability and Expiry */}
+          <div className="flex justify-between mt-2 text-xs text-muted-foreground">
+            <span>
+              {translate("product.availability")}:{" "}
+              {product.stockCount > 0
+                ? `${product.stockCount} ${translate("product.inStock")}`
+                : translate("product.outOfStock")}
+            </span>
+            <span>
+              {translate("product.expiry")}:{" "}
+              {product.expiryDate
+                ? new Date(product.expiryDate).toLocaleDateString()
+                : "-"}
+            </span>
+          </div>
+
           {/* Swipe indicator - mobile only */}
           <div className="absolute bottom-2 right-2 md:hidden">
             <div className="flex items-center text-xs text-gray-500">
