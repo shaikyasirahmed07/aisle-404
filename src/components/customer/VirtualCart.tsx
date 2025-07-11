@@ -95,10 +95,14 @@ const VirtualCart: React.FC<VirtualCartProps> = ({
       return;
     }
 
-    // Simulate checkout process
+    // Calculate estimated waiting time based on queue
+    const customersAhead = Math.floor(Math.random() * 8) + 1; // 1-8 customers
+    const waitingTime = customersAhead * 2; // 2 minutes per customer
+
     toast({
       title: "Proceed to Checkout",
-      description: "Take your cart to the checkout counter for payment",
+      description: `Estimated waiting time: ${waitingTime} minutes (${customersAhead} customers ahead)`,
+      duration: 5000,
     });
   };
 
@@ -276,10 +280,22 @@ const VirtualCart: React.FC<VirtualCartProps> = ({
               )}
             </div>
             
-            <Button className="w-full btn-primary" onClick={handleCheckout}>
-              <CreditCard className="w-4 h-4 mr-2" />
-              Proceed to Checkout
-            </Button>
+            <div className="space-y-3">
+              <div className="text-center p-3 bg-secondary-light rounded-lg">
+                <div className="text-sm font-medium text-secondary">Estimated Waiting Time</div>
+                <div className="text-lg font-bold text-foreground">
+                  {Math.floor(Math.random() * 8) + 2} minutes
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  {Math.floor(Math.random() * 4) + 1} customers ahead in queue
+                </div>
+              </div>
+              
+              <Button className="w-full btn-primary" onClick={handleCheckout}>
+                <CreditCard className="w-4 h-4 mr-2" />
+                Proceed to Checkout
+              </Button>
+            </div>
             
             <div className="text-xs text-muted-foreground text-center">
               Note: This is a virtual cart. Actual payment will be processed at the checkout counter.

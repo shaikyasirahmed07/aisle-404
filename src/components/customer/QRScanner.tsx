@@ -11,9 +11,10 @@ import { toast } from '@/hooks/use-toast';
 interface QRScannerProps {
   onProductScan: (product: Product) => void;
   onAddToCart: (product: Product) => void;
+  t?: (key: string, options?: any) => string;
 }
 
-const QRScanner: React.FC<QRScannerProps> = ({ onProductScan, onAddToCart }) => {
+const QRScanner: React.FC<QRScannerProps> = ({ onProductScan, onAddToCart, t }) => {
   const [scanInput, setScanInput] = useState('');
   const [scannedProduct, setScannedProduct] = useState<Product | null>(null);
   const [showReviews, setShowReviews] = useState(false);
@@ -59,7 +60,7 @@ const QRScanner: React.FC<QRScannerProps> = ({ onProductScan, onAddToCart }) => 
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <Camera className="w-5 h-5" />
-            <span>Camera Scanner</span>
+            <span>{t?.("customer.cameraScanner") || "Camera Scanner"}</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -69,20 +70,20 @@ const QRScanner: React.FC<QRScannerProps> = ({ onProductScan, onAddToCart }) => 
               <QrCode className="w-16 h-16 text-white/70" />
             </div>
             <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white text-sm bg-black/50 px-3 py-1 rounded">
-              Position QR code within the frame
+              {t?.("customer.positionQR") || "Position QR code within the frame"}
             </div>
           </div>
 
           {/* Manual Input for Demo */}
           <div className="flex space-x-2">
             <Input
-              placeholder="Enter QR code or product ID for demo..."
+              placeholder={t?.("customer.enterQR") || "Enter QR code or product ID for demo..."}
               value={scanInput}
               onChange={(e) => setScanInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleScan()}
             />
             <Button onClick={handleScan} className="btn-primary">
-              Scan
+              {t?.("customer.scan") || "Scan"}
             </Button>
           </div>
 

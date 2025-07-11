@@ -104,7 +104,22 @@
     "productScanned": "प्रोडक्ट स्कैन किया गया!",
     "budgetReached": "बजट अलर्ट!",
     "budgetReachedDescription": "आपने अपने बजट (₹{{amount}}) का {{percentage}}% पहुंच गया है",
-    "items": "आइटम्स"
+    "items": "आइटम्स",
+    "recentlyScanned": "हाल ही में स्कैन किए गए",
+    "swipeToAdd": "कार्ट में जोड़ने के लिए स्वाइप करें",
+    "proceedToCheckout": "चेकआउट के लिए आगे बढ़ें",
+    "waitingTime": "अनुमानित प्रतीक्षा समय",
+    "minutes": "मिनट",
+    "customersAhead": "आपके आगे ग्राहक",
+    "smartShopping": "स्मार्ट शॉपिंग",
+    "scanDescription": "उत्पाद की जानकारी, मूल्य निर्धारण और स्थान देखने के लिए उत्पाद क्यूआर कोड स्कैन करें",
+    "cameraScanner": "कैमरा स्कैनर",
+    "positionQR": "क्यूआर कोड को फ्रेम के भीतर रखें",
+    "scan": "स्कैन",
+    "enterQR": "क्यूआर कोड या उत्पाद आईडी दर्ज करें",
+    "likes": "पसंद",
+    "comments": "टिप्पणियां",
+    "aisle": "गलियारा"
   },
   "product": {
     "name": "प्रोडक्ट नाम",

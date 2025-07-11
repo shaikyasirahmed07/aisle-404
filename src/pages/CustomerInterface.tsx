@@ -22,6 +22,7 @@ import QRScanner from '@/components/customer/QRScanner';
 import ProductSearch from '@/components/customer/ProductSearch';
 import VirtualCart from '@/components/customer/VirtualCart';
 import StoreMap from '@/components/customer/StoreMap';
+import ProductCard from '@/components/customer/ProductCard';
 import { toast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
 import LanguageSelector from '@/components/LanguageSelector';
@@ -158,8 +159,8 @@ const CustomerInterface = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-8 pb-20 md:pb-8">
         {/* Welcome Section - Desktop Only */}
         <div className="hidden md:block mb-8">
-          <h2 className="text-3xl font-bold text-foreground mb-2">Welcome to Smart Shopping!</h2>
-          <p className="text-muted-foreground">Scan QR codes, find products, and navigate the store with ease</p>
+          <h2 className="text-3xl font-bold text-foreground mb-2">{t("customer.smartShopping")}!</h2>
+          <p className="text-muted-foreground">{t("customer.scanDescription")}</p>
           
           {/* Budget Alert */}
           {getBudgetStatus().status !== 'safe' && (
@@ -180,24 +181,24 @@ const CustomerInterface = () => {
             <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="scan" className="flex items-center space-x-2">
                 <QrCode className="w-4 h-4" />
-                <span>QR Scan</span>
+                <span>{t("customer.scanQR")}</span>
               </TabsTrigger>
               <TabsTrigger value="search" className="flex items-center space-x-2">
                 <Search className="w-4 h-4" />
-                <span>Search</span>
+                <span>{t("customer.productSearch")}</span>
               </TabsTrigger>
               <TabsTrigger value="cart" className="flex items-center space-x-2">
                 <ShoppingCart className="w-4 h-4" />
-                <span>Cart ({cartItems.length})</span>
+                <span>{t("customer.virtualCart")} ({cartItems.length})</span>
               </TabsTrigger>
               <TabsTrigger value="map" className="flex items-center space-x-2">
                 <MapPin className="w-4 h-4" />
-                <span>Store Map</span>
+                <span>{t("customer.storeMap")}</span>
               </TabsTrigger>
             </TabsList>
 
             <TabsContent value="scan" className="space-y-6">
-              <QRScanner onProductScan={handleProductScan} onAddToCart={addToCart} />
+              <QRScanner onProductScan={handleProductScan} onAddToCart={addToCart} t={t} />
             </TabsContent>
 
             <TabsContent value="search" className="space-y-6">
@@ -223,7 +224,7 @@ const CustomerInterface = () => {
         {/* Mobile Content */}
         <div className="md:hidden">
           {activeTab === 'search' && <ProductSearch onAddToCart={addToCart} />}
-          {activeTab === 'scan' && <QRScanner onProductScan={handleProductScan} onAddToCart={addToCart} />}
+          {activeTab === 'scan' && <QRScanner onProductScan={handleProductScan} onAddToCart={addToCart} t={t} />}
           {activeTab === 'cart' && (
             <VirtualCart 
               cartItems={cartItems} 
@@ -241,129 +242,18 @@ const CustomerInterface = () => {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <QrCode className="w-5 h-5" />
-                <span>Recently Scanned</span>
+                <span>{t("customer.recentlyScanned")}</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {scannedProducts.slice(-6).map((product) => (
-                  <div key={product.id} className="border rounded-lg p-4 space-y-3 max-w-sm mx-auto md:max-w-none">
-                    {/* Mobile Product Card */}
-                    <div className="md:hidden">
-                      <div className="relative mb-3">
-                        <div className="w-full h-32 bg-gray-100 rounded-lg flex items-center justify-center">
-                          <span className="text-gray-400 text-sm">Product Image</span>
-                        </div>
-                        <button className="absolute top-2 right-2 p-1">
-                          <Heart className="w-5 h-5 text-gray-400" />
-                        </button>
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <h4 className="font-medium text-sm">{product.name}</h4>
-                            <p className="text-xs text-muted-foreground">Dairy</p>
-                          </div>
-                        </div>
-                        
-                        <div className="flex items-center space-x-1 text-xs text-muted-foreground">
-                          <MapPin className="w-3 h-3" />
-                          <span>Aisle {product.aisleLocation}</span>
-                        </div>
-                        
-                        <div className="flex items-center space-x-2">
-                          <span className="text-lg font-bold text-primary">₹{product.price}</span>
-                          {product.discount > 0 && (
-                            <>
-                              <span className="text-sm text-muted-foreground line-through">₹{product.mrp}</span>
-                              <Badge variant="secondary" className="bg-success-light text-success text-xs">
-                                {product.discount}% OFF
-                              </Badge>
-                            </>
-                          )}
-                        </div>
-                        
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-1">
-                            {[...Array(5)].map((_, i) => (
-                              <Star 
-                                key={i} 
-                                className={`w-3 h-3 ${
-                                  i < Math.floor(product.averageRating) 
-                                    ? 'text-yellow-400 fill-current' 
-                                    : 'text-gray-300'
-                                }`} 
-                              />
-                            ))}
-                            <span className="text-xs text-muted-foreground ml-1">
-                              {product.averageRating}
-                            </span>
-                          </div>
-                          
-                          <div className="flex items-center space-x-3 text-xs text-muted-foreground">
-                            <div className="flex items-center space-x-1">
-                              <Heart className="w-3 h-3" />
-                              <span>2.3k</span>
-                            </div>
-                            <div className="flex items-center space-x-1">
-                              <MessageCircle className="w-3 h-3" />
-                              <span>630</span>
-                            </div>
-                          </div>
-                        </div>
-                        
-                        <Button 
-                          size="sm" 
-                          className="w-full btn-primary mt-3"
-                          onClick={() => addToCart(product)}
-                        >
-                          Add to Cart
-                        </Button>
-                      </div>
-                    </div>
-
-                    {/* Desktop Product Card */}
-                    <div className="hidden md:block">
-                      <div className="flex justify-between items-start">
-                        <h4 className="font-medium">{product.name}</h4>
-                        <Badge variant="outline">{product.aisleLocation}</Badge>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <span className="text-lg font-bold text-primary">₹{product.price}</span>
-                        {product.discount > 0 && (
-                          <>
-                            <span className="text-sm text-muted-foreground line-through">₹{product.mrp}</span>
-                            <Badge variant="secondary" className="bg-success-light text-success">
-                              {product.discount}% OFF
-                            </Badge>
-                          </>
-                        )}
-                      </div>
-                      <div className="flex items-center space-x-1">
-                        {[...Array(5)].map((_, i) => (
-                          <Star 
-                            key={i} 
-                            className={`w-4 h-4 ${
-                              i < Math.floor(product.averageRating) 
-                                ? 'text-yellow-400 fill-current' 
-                                : 'text-gray-300'
-                            }`} 
-                          />
-                        ))}
-                        <span className="text-sm text-muted-foreground">
-                          ({product.averageRating})
-                        </span>
-                      </div>
-                      <Button 
-                        size="sm" 
-                        className="w-full btn-primary"
-                        onClick={() => addToCart(product)}
-                      >
-                        Add to Cart
-                      </Button>
-                    </div>
-                  </div>
+                  <ProductCard 
+                    key={product.id} 
+                    product={product} 
+                    onAddToCart={addToCart}
+                    t={t}
+                  />
                 ))}
               </div>
             </CardContent>
@@ -371,7 +261,7 @@ const CustomerInterface = () => {
         )}
       </div>
 
-      {/* Mobile Bottom Navigation */}
+        {/* Mobile Bottom Navigation */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-background border-t border-border">
         <div className="grid grid-cols-3 h-16">
           <button
@@ -381,7 +271,7 @@ const CustomerInterface = () => {
             }`}
           >
             <Search className="w-5 h-5" />
-            <span className="text-xs">Search</span>
+            <span className="text-xs">{t("customer.productSearch")}</span>
           </button>
           
           <button
@@ -391,7 +281,7 @@ const CustomerInterface = () => {
             }`}
           >
             <QrCode className="w-5 h-5" />
-            <span className="text-xs">Scan</span>
+            <span className="text-xs">{t("customer.scan")}</span>
           </button>
           
           <button
@@ -401,7 +291,7 @@ const CustomerInterface = () => {
             }`}
           >
             <ShoppingCart className="w-5 h-5" />
-            <span className="text-xs">Cart</span>
+            <span className="text-xs">{t("customer.virtualCart")}</span>
             {cartItems.length > 0 && (
               <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center">
                 {cartItems.length}
