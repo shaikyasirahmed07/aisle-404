@@ -1,15 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Search, MapPin, Star, ShoppingCart, Navigation, Filter } from 'lucide-react';
-import { mockProducts, Product } from '@/data/mockData';
 import ProductCard from './ProductCard';
+import { fetchAllProducts, searchProducts } from '@/services/productService';
+import { useToast } from '@/hooks/use-toast';
 
 interface ProductSearchProps {
-  onAddToCart: (product: Product) => void;
+  onAddToCart: (product: any) => void;
   t: (key: string, options?: any) => string;
 }
 
@@ -18,34 +19,64 @@ const ProductSearch: React.FC<ProductSearchProps> = ({ onAddToCart, t }) => {
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [sortBy, setSortBy] = useState('name');
   const [showFilters, setShowFilters] = useState(false);
+  const [products, setProducts] = useState<any[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
 
-  const categories = [...new Set(mockProducts.map(p => p.category))];
+  // Initial product load
+  useEffect(() => {
+    loadProducts();
+  }, []);
 
-  const filteredProducts = mockProducts
-    .filter(product => {
-      const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           product.category.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesCategory = categoryFilter === 'all' || product.category === categoryFilter;
-      return matchesSearch && matchesCategory;
-    })
-    .sort((a, b) => {
-      switch (sortBy) {
-        case 'price-low':
-          return a.price - b.price;
-        case 'price-high':
-          return b.price - a.price;
-        case 'rating':
-          return b.averageRating - a.averageRating;
-        case 'discount':
-          return b.discount - a.discount;
-        default:
-          return a.name.localeCompare(b.name);
-      }
-    });
+  // Load products based on search/filter/sort
+  useEffect(() => {
+    if (searchTerm || categoryFilter !== 'all' || sortBy !== 'name') {
+      handleSearch();
+    }
+  }, [categoryFilter, sortBy]);
 
-  const handleTakeMeThere = (product: Product) => {
-    // In a real app, this would show navigation
-    alert(`Navigate to Aisle ${product.aisleLocation} to find ${product.name}`);
+  const loadProducts = async () => {
+    setLoading(true);
+    try {
+      const allProducts = await fetchAllProducts();
+      setProducts(allProducts);
+      
+      // Extract unique categories
+      const uniqueCategories = Array.from(new Set(allProducts.map(p => p.category)));
+      setCategories(uniqueCategories);
+    } catch (error) {
+      console.error('Failed to load products:', error);
+      toast({
+        title: t("search.error"),
+        description: t("search.errorLoadingProducts"),
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSearch = async () => {
+    setLoading(true);
+    try {
+      const results = await searchProducts(searchTerm, categoryFilter, sortBy);
+      setProducts(results);
+    } catch (error) {
+      console.error('Search failed:', error);
+      toast({
+        title: t("search.error"),
+        description: t("search.errorSearching"),
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    handleSearch();
   };
 
   return (
@@ -58,7 +89,7 @@ const ProductSearch: React.FC<ProductSearchProps> = ({ onAddToCart, t }) => {
       {/* Search Bar */}
       <Card className="card-retail">
         <CardContent className="p-4">
-          <div className="space-y-4">
+          <form onSubmit={handleSearchSubmit} className="space-y-4">
             <div className="relative">
               <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
@@ -73,6 +104,7 @@ const ProductSearch: React.FC<ProductSearchProps> = ({ onAddToCart, t }) => {
               <Button 
                 variant="outline" 
                 size="sm"
+                type="button"
                 onClick={() => setShowFilters(!showFilters)}
                 className="flex items-center space-x-2"
               >
@@ -108,13 +140,20 @@ const ProductSearch: React.FC<ProductSearchProps> = ({ onAddToCart, t }) => {
                   </Select>
                 </>
               )}
+              
+              <Button 
+                type="submit" 
+                className="ml-auto"
+              >
+                {t("search.search")}
+              </Button>
             </div>
-          </div>
+          </form>
         </CardContent>
       </Card>
 
       {/* Quick Search Suggestions */}
-      {searchTerm === '' && (
+      {searchTerm === '' && !loading && (
         <Card className="card-retail">
           <CardHeader>
             <CardTitle>{t("search.popularSearches")}</CardTitle>
@@ -126,7 +165,10 @@ const ProductSearch: React.FC<ProductSearchProps> = ({ onAddToCart, t }) => {
                   key={term}
                   variant="outline"
                   size="sm"
-                  onClick={() => setSearchTerm(term)}
+                  onClick={() => {
+                    setSearchTerm(term);
+                    handleSearch();
+                  }}
                 >
                   {term}
                 </Button>
@@ -140,7 +182,7 @@ const ProductSearch: React.FC<ProductSearchProps> = ({ onAddToCart, t }) => {
       <Card className="card-retail">
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
-            <span>{t("search.results")} ({filteredProducts.length})</span>
+            <span>{t("search.results")} ({products.length})</span>
             {searchTerm && (
               <Badge variant="outline">
                 {t("search.searchingFor")}: "{searchTerm}"
@@ -149,14 +191,18 @@ const ProductSearch: React.FC<ProductSearchProps> = ({ onAddToCart, t }) => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {filteredProducts.length === 0 ? (
+          {loading ? (
+            <div className="flex justify-center py-8">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+            </div>
+          ) : products.length === 0 ? (
             <div className="text-center py-8">
               <Search className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
               <p className="text-muted-foreground">{t("search.noResults")}</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filteredProducts.map((product) => (
+              {products.map((product) => (
                 <ProductCard 
                   key={product.id} 
                   product={product} 

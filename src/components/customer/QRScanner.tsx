@@ -4,57 +4,88 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Camera, QrCode, MapPin, Star, ShoppingCart, Info } from 'lucide-react';
-import { mockProducts, Product } from '@/data/mockData';
-import { toast } from '@/hooks/use-toast';
+import { fetchProductById } from '@/services/productService';
+import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
 import ProductCard from './ProductCard';
 
 interface QRScannerProps {
-  onProductScan: (product: Product) => void;
-  onAddToCart: (product: Product) => void;
+  onProductScan: (product: any) => void;
+  onAddToCart: (product: any) => void;
   t?: (key: string, options?: any) => string;
 }
 
 const QRScanner: React.FC<QRScannerProps> = ({ onProductScan, onAddToCart, t: tProp }) => {
   const { t } = useTranslation();
   const translate = tProp || t;
+  const { toast } = useToast();
   
   const [scanInput, setScanInput] = useState('');
-  const [scannedProduct, setScannedProduct] = useState<Product | null>(null);
-  const [recentlyScanned, setRecentlyScanned] = useState<Product[]>([]);
+  const [scannedProduct, setScannedProduct] = useState<any | null>(null);
+  const [recentlyScanned, setRecentlyScanned] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  const handleScan = () => {
-    // Simulate QR scanning by searching for product by QR code or ID
-    const product = mockProducts.find(p => 
-      p.qrCode?.toLowerCase().includes(scanInput.toLowerCase()) ||
-      p.id?.toLowerCase().includes(scanInput.toLowerCase()) ||
-      p.name?.toLowerCase().includes(scanInput.toLowerCase())
-    );
-
-    if (product) {
-      setScannedProduct(product);
-      addToRecentlyScanned(product);
-      onProductScan(product);
-      setScanInput('');
-    } else {
+  const handleScan = async () => {
+    if (!scanInput.trim()) {
       toast({
-        title: translate("product.notFound"),
-        description: translate("product.noProductFound"),
+        title: translate("qr.emptyInput"),
+        description: translate("qr.enterProductIdOrScan"),
         variant: "destructive",
       });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      // Attempt to fetch product by ID
+      const product = await fetchProductById(scanInput);
+      
+      if (product) {
+        setScannedProduct(product);
+        addToRecentlyScanned(product);
+        onProductScan(product);
+        setScanInput('');
+      } else {
+        toast({
+          title: translate("product.notFound"),
+          description: translate("product.noProductFound"),
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Error scanning product:', error);
+      toast({
+        title: translate("qr.scanError"),
+        description: translate("qr.scanErrorDescription"),
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleSimulatedScan = (productId: string) => {
-    const product = mockProducts.find(p => p.id === productId);
-    if (product) {
-      setScannedProduct(product);
-      addToRecentlyScanned(product);
-      onProductScan(product);
+  const handleSimulatedScan = async (productId: string) => {
+    setLoading(true);
+    try {
+      const product = await fetchProductById(productId);
+      if (product) {
+        setScannedProduct(product);
+        addToRecentlyScanned(product);
+        onProductScan(product);
+      }
+    } catch (error) {
+      console.error('Error in simulated scan:', error);
+      toast({
+        title: translate("qr.scanError"),
+        description: translate("qr.scanErrorDescription"),
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
     }
   };
   
-  const addToRecentlyScanned = (product: Product) => {
+  const addToRecentlyScanned = (product: any) => {
     setRecentlyScanned(prev => {
       // Check if product already exists in recently scanned
       if (prev.some(p => p.id === product.id)) {
@@ -77,7 +108,7 @@ const QRScanner: React.FC<QRScannerProps> = ({ onProductScan, onAddToCart, t: tP
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <Camera className="w-5 h-5" />
-            <span>{translate("customer.cameraScanner")}</span>
+            <span>{translate("qr.cameraScanner")}</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -87,39 +118,69 @@ const QRScanner: React.FC<QRScannerProps> = ({ onProductScan, onAddToCart, t: tP
               <QrCode className="w-16 h-16 text-white/70" />
             </div>
             <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white text-sm bg-black/50 px-3 py-1 rounded">
-              {translate("customer.positionQR")}
+              {translate("qr.positionQR")}
             </div>
           </div>
 
           {/* Manual Input for Demo */}
           <div className="flex space-x-2">
             <Input
-              placeholder={translate("customer.enterQR")}
+              placeholder={translate("qr.enterProductId")}
               value={scanInput}
               onChange={(e) => setScanInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleScan()}
+              disabled={loading}
             />
-            <Button onClick={handleScan} className="bg-primary text-white">
-              {translate("customer.scan")}
+            <Button 
+              onClick={handleScan} 
+              className="bg-primary text-white"
+              disabled={loading}
+            >
+              {loading ? translate("common.loading") : translate("customer.scan")}
             </Button>
           </div>
 
           {/* Quick Demo Buttons */}
           <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-            <Button variant="outline" size="sm" onClick={() => handleSimulatedScan('P001')}>
-              {translate("product.demoToothpaste")}
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => handleSimulatedScan('P001')}
+              disabled={loading}
+            >
+              {translate("product.demoToothpaste") || "Toothpaste"}
             </Button>
-            <Button variant="outline" size="sm" onClick={() => handleSimulatedScan('P002')}>
-              {translate("product.demoMilk")}
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => handleSimulatedScan('P002')}
+              disabled={loading}
+            >
+              {translate("product.demoMilk") || "Milk"}
             </Button>
-            <Button variant="outline" size="sm" onClick={() => handleSimulatedScan('P003')}>
-              {translate("product.demoNoodles")}
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => handleSimulatedScan('P003')}
+              disabled={loading}
+            >
+              {translate("product.demoNoodles") || "Noodles"}
             </Button>
-            <Button variant="outline" size="sm" onClick={() => handleSimulatedScan('P004')}>
-              {translate("product.demoCookies")}
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => handleSimulatedScan('P004')}
+              disabled={loading}
+            >
+              {translate("product.demoCookies") || "Cookies"}
             </Button>
-            <Button variant="outline" size="sm" onClick={() => handleSimulatedScan('P005')}>
-              {translate("product.demoDetergent")}
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => handleSimulatedScan('P005')}
+              disabled={loading}
+            >
+              {translate("product.demoDetergent") || "Detergent"}
             </Button>
           </div>
         </CardContent>
@@ -129,7 +190,7 @@ const QRScanner: React.FC<QRScannerProps> = ({ onProductScan, onAddToCart, t: tP
       {recentlyScanned.length > 0 && (
         <div className="space-y-3">
           <h4 className="font-bold flex items-center">
-            {translate("customer.recentlyScanned")}
+            {translate("qr.recentlyScanned")}
             <Badge className="ml-2 bg-primary">{recentlyScanned.length}</Badge>
           </h4>
           
@@ -154,7 +215,7 @@ const QRScanner: React.FC<QRScannerProps> = ({ onProductScan, onAddToCart, t: tP
               <span>{translate("product.details")}</span>
               <Badge variant="outline" className="flex items-center space-x-1">
                 <MapPin className="w-3 h-3" />
-                <span>{translate("customer.aisle")} {scannedProduct.aisleLocation}</span>
+                <span>{translate("product.aisle")} {scannedProduct.aisleLocation}</span>
               </Badge>
             </CardTitle>
           </CardHeader>
@@ -174,9 +235,9 @@ const QRScanner: React.FC<QRScannerProps> = ({ onProductScan, onAddToCart, t: tP
           <div className="flex items-start space-x-3">
             <Info className="w-5 h-5 text-secondary mt-0.5" />
             <div>
-              <p className="font-medium text-secondary">{translate("customer.scanWithoutSignin")}</p>
+              <p className="font-medium text-secondary">{translate("qr.scanWithoutSignin")}</p>
               <p className="text-sm text-muted-foreground">
-                {translate("customer.scanWithoutSigninDesc")}
+                {translate("qr.scanWithoutSigninDesc")}
               </p>
             </div>
           </div>

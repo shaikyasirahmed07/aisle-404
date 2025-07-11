@@ -9,13 +9,9 @@ import {
   Search, 
   ShoppingCart, 
   MapPin,
-  Star,
-  Heart,
-  MessageCircle,
-  Gift,
-  Receipt
+  Gift
 } from 'lucide-react';
-import { mockProducts, Product } from '@/data/mockData';
+import { fetchAllProducts } from '@/services/productService';
 import QRScanner from '@/components/customer/QRScanner';
 import ProductSearch from '@/components/customer/ProductSearch';
 import VirtualCart from '@/components/customer/VirtualCart';
@@ -24,15 +20,23 @@ import ProductCard from '@/components/customer/ProductCard';
 import { toast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
 import LanguageSelector from '@/components/LanguageSelector';
+import { incrementProductCartCount } from '@/services/productService';
 
 const CustomerInterface = () => {
   const { user, logout } = useAuth();
-  const [scannedProducts, setScannedProducts] = useState<Product[]>([]);
-  const [cartItems, setCartItems] = useState<{product: Product, quantity: number}[]>([]);
+  const [scannedProducts, setScannedProducts] = useState<any[]>([]);
+  const [cartItems, setCartItems] = useState<{product: any, quantity: number}[]>([]);
   const [showFirstTimeDiscount, setShowFirstTimeDiscount] = useState(false);
   const [userBudget, setUserBudget] = useState<number>(1000);
   const [activeTab, setActiveTab] = useState('scan');
+  const [featuredProducts, setFeaturedProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
   const { t, i18n } = useTranslation();
+
+  // Load featured products on mount
+  useEffect(() => {
+    loadFeaturedProducts();
+  }, []);
 
   useEffect(() => {
     if (user?.isFirstTime) {
@@ -44,7 +48,21 @@ const CustomerInterface = () => {
     }
   }, [user, t]);
 
-  const handleProductScan = (product: Product) => {
+  const loadFeaturedProducts = async () => {
+    setLoading(true);
+    try {
+      const products = await fetchAllProducts();
+      // Select a few random products to feature
+      const randomProducts = products.sort(() => 0.5 - Math.random()).slice(0, 4);
+      setFeaturedProducts(randomProducts);
+    } catch (error) {
+      console.error('Failed to load featured products:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleProductScan = (product: any) => {
     setScannedProducts(prev => {
       const exists = prev.find(p => p.id === product.id);
       if (!exists) {
@@ -58,7 +76,7 @@ const CustomerInterface = () => {
     });
   };
 
-  const addToCart = (product: Product) => {
+  const addToCart = async (product: any) => {
     setCartItems(prev => {
       const existing = prev.find(item => item.product.id === product.id);
       if (existing) {
@@ -70,6 +88,13 @@ const CustomerInterface = () => {
       }
       return [...prev, { product, quantity: 1 }];
     });
+    
+    // Update cart count in database
+    try {
+      await incrementProductCartCount(product.productId);
+    } catch (error) {
+      console.error('Failed to update cart count:', error);
+    }
     
     const updatedTotalAmount = getTotalAmount() + product.price;
     if (updatedTotalAmount > userBudget * 0.8) {
@@ -163,16 +188,22 @@ const CustomerInterface = () => {
               </div>
               <p className="text-muted-foreground mb-6">{t("customer.scanDescription")}</p>
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {mockProducts.slice(0, 4).map(product => (
-                  <ProductCard
-                    key={product.id}
-                    product={product}
-                    onAddToCart={addToCart}
-                    t={t}
-                  />
-                ))}
-              </div>
+              {loading ? (
+                <div className="flex justify-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {featuredProducts.map(product => (
+                    <ProductCard
+                      key={product.id}
+                      product={product}
+                      onAddToCart={addToCart}
+                      t={t}
+                    />
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
