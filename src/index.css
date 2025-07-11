@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -169,6 +170,41 @@
     @apply flex flex-col items-center justify-center w-16 py-2;
   }
 
+  /* Product Cards - Mobile Specific */
+  @media (max-width: 480px) {
+    .mobile-product-card {
+      @apply max-w-sm mx-auto border rounded-lg p-3 bg-white;
+    }
+    
+    .mobile-product-image {
+      @apply w-full h-32 bg-gray-100 rounded-lg flex items-center justify-center relative mb-3;
+    }
+    
+    .mobile-product-content {
+      @apply space-y-2;
+    }
+    
+    .mobile-product-title {
+      @apply font-medium text-sm leading-tight;
+    }
+    
+    .mobile-product-category {
+      @apply text-xs text-muted-foreground;
+    }
+    
+    .mobile-product-price {
+      @apply text-lg font-bold text-primary;
+    }
+    
+    .mobile-product-rating {
+      @apply flex items-center space-x-1;
+    }
+    
+    .mobile-product-stats {
+      @apply flex items-center space-x-3 text-xs text-muted-foreground;
+    }
+  }
+
   /* Gradients */
   .bg-gradient-primary {
     background: var(--gradient-primary);
@@ -257,5 +293,28 @@
   
   .spacing-loose {
     @apply space-y-8;
+  }
+
+  /* Mobile-specific utilities */
+  @media (max-width: 480px) {
+    .mobile-hidden {
+      @apply hidden;
+    }
+    
+    .mobile-block {
+      @apply block;
+    }
+    
+    .mobile-padding {
+      @apply px-4 py-3;
+    }
+    
+    .mobile-text-sm {
+      @apply text-sm;
+    }
+    
+    .mobile-text-xs {
+      @apply text-xs;
+    }
   }
 }

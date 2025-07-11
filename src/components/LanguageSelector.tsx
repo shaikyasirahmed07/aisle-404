@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -27,7 +28,6 @@ const LanguageSelector = () => {
 
   const handleLanguageChange = (langCode: string) => {
     i18n.changeLanguage(langCode);
-    // Store preference in localStorage for persistence
     localStorage.setItem('preferredLanguage', langCode);
   };
 
@@ -38,15 +38,15 @@ const LanguageSelector = () => {
       <SelectTrigger 
         className={cn(
           "flex items-center gap-2 border-muted/60 bg-background/80 backdrop-blur-sm",
-          isMobile ? "w-full h-11 rounded-xl px-3" : "w-40 h-10"
+          isMobile ? "w-20 h-8 text-xs" : "w-36 h-10"
         )}
       >
-        <Languages className="w-4 h-4" />
+        <Languages className={cn(isMobile ? "w-3 h-3" : "w-4 h-4")} />
         <SelectValue 
           placeholder="Language" 
           className="text-sm font-medium"
         >
-          {isMobile ? currentLanguage.nativeName : currentLanguage.name}
+          {isMobile ? currentLanguage.code.toUpperCase() : currentLanguage.name}
         </SelectValue>
       </SelectTrigger>
       <SelectContent className="max-h-72">
