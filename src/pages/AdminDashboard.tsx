@@ -104,22 +104,24 @@ const AdminDashboard = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="bg-card border-b border-border shadow-soft">
+      <header className="bg-gradient-to-r from-primary via-blue-600 to-blue-700 border-b border-border shadow-soft">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
+          <div className="flex justify-between items-center h-20">
             <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
-                <QrCode className="w-8 h-8 text-primary" />
-                <h1 className="text-xl font-bold text-foreground">Aisle404 Admin</h1>
+              <div className="flex items-center space-x-3">
+                <div className="bg-white rounded-full p-2 shadow-soft">
+                  <QrCode className="w-8 h-8 text-primary" />
+                </div>
+                <span className="text-2xl font-bold text-white tracking-wide">Aisle404 Admin</span>
               </div>
             </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-muted-foreground">
-                Welcome, {adminUser?.name || 'Admin'}
+            <div className="flex items-center space-x-6">
+              <span className="text-base font-medium text-white/80">
+                {t("common.welcome")}, {adminUser?.name || 'Admin'}
               </span>
               <LanguageSelector />
-              <Button variant="outline" onClick={handleLogout}>
-                Logout
+              <Button variant="outline" onClick={handleLogout} className="border-white text-white hover:bg-white hover:text-primary">
+                {t("common.logout")}
               </Button>
             </div>
           </div>

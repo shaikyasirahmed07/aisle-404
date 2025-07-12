@@ -134,29 +134,31 @@ const CustomerInterface = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Desktop Header - Hidden on Mobile */}
-      <header className="hidden md:block bg-card border-b border-border shadow-soft">
+      <header className="hidden md:block bg-gradient-to-r from-primary via-blue-600 to-blue-700 border-b border-border shadow-soft">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
+          <div className="flex justify-between items-center h-20">
             <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
-                <QrCode className="w-8 h-8 text-primary" />
-                <h1 className="text-xl font-bold text-foreground">{t("common.welcome")}</h1>
+              <div className="flex items-center space-x-3">
+                <div className="bg-white rounded-full p-2 shadow-soft">
+                  <QrCode className="w-8 h-8 text-primary" />
+                </div>
+                <span className="text-2xl font-bold text-white tracking-wide">{t("common.welcome")}</span>
               </div>
               {user?.isFirstTime && (
-                <Badge variant="secondary" className="bg-success-light text-success">
+                <Badge variant="secondary" className="bg-success-light text-success ml-4">
                   <Gift className="w-3 h-3 mr-1" />
                   {t("customer.firstPurchaseDiscount")}
                 </Badge>
               )}
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-6">
               <LanguageSelector />
-              <div className="flex items-center space-x-2">
-                <ShoppingCart className="w-5 h-5 text-muted-foreground" />
-                <span className="text-sm font-medium">{cartItems.reduce((sum, item) => sum + item.quantity, 0)} </span>
-                <span className="text-sm text-muted-foreground">₹{getTotalAmount().toFixed(2)}</span>
+              <div className="flex items-center space-x-2 bg-white/80 rounded-lg px-3 py-1 shadow-soft">
+                <ShoppingCart className="w-5 h-5 text-primary" />
+                <span className="text-base font-semibold text-primary">{cartItems.reduce((sum, item) => sum + item.quantity, 0)}</span>
+                <span className="text-base text-muted-foreground">₹{getTotalAmount().toFixed(2)}</span>
               </div>
-              <Button variant="outline" onClick={logout}>
+              <Button variant="outline" onClick={logout} className="border-white text-white hover:bg-white hover:text-primary">
                 {t("common.logout")}
               </Button>
             </div>
@@ -211,33 +213,7 @@ const CustomerInterface = () => {
         {/* Main Content Area with Tabs */}
         <Tabs defaultValue="scan" value={activeTab} onValueChange={handleTabChange}>
           {/* Mobile Tabs - Hidden on Desktop */}
-          <div className="md:hidden mb-6">
-            <TabsList className="w-full grid grid-cols-4">
-              <TabsTrigger value="scan" className="flex flex-col items-center py-2">
-                <QrCode className="h-5 w-5 mb-1" />
-                <span className="text-xs">{t("customer.scanQR")}</span>
-              </TabsTrigger>
-              <TabsTrigger value="search" className="flex flex-col items-center py-2">
-                <Search className="h-5 w-5 mb-1" />
-                <span className="text-xs">{t("customer.productSearch")}</span>
-              </TabsTrigger>
-              <TabsTrigger value="map" className="flex flex-col items-center py-2">
-                <MapPin className="h-5 w-5 mb-1" />
-                <span className="text-xs">{t("customer.storeMap")}</span>
-              </TabsTrigger>
-              <TabsTrigger value="cart" className="flex flex-col items-center py-2">
-                <div className="relative">
-                  <ShoppingCart className="h-5 w-5 mb-1" />
-                  {cartItems.length > 0 && (
-                    <Badge className="absolute -top-1 -right-2 h-4 w-4 p-0 flex items-center justify-center">
-                      {cartItems.reduce((sum, item) => sum + item.quantity, 0)}
-                    </Badge>
-                  )}
-                </div>
-                <span className="text-xs">{t("customer.virtualCart")}</span>
-              </TabsTrigger>
-            </TabsList>
-          </div>
+ 
 
           {/* Desktop Navigation - Hidden on Mobile */}
           <div className="hidden md:block mb-6">
