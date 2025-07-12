@@ -30,7 +30,7 @@ const Index = () => {
             </div>
           </Link>
 
-          <Link to="/customer">
+          {/* <Link to="/customer">
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20 hover:bg-white/20 transition-all cursor-pointer">
               <ShoppingCart className="w-12 h-12 text-white mb-4 mx-auto" />
               <h3 className="text-white font-semibold mb-2 text-xl">Customer</h3>
@@ -39,7 +39,7 @@ const Index = () => {
                 Start Shopping
               </Button>
             </div>
-          </Link>
+          </Link> */}
         </div>
 
         <div className="absolute top-4 right-4">

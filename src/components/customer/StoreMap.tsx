@@ -64,8 +64,15 @@ const StoreMap = () => {
         </CardHeader>
         <CardContent>
           <div className="relative bg-slate-100 rounded-lg p-4 aspect-[4/3] overflow-hidden">
-            {/* Store Layout */}
-            <div className="relative w-full h-full border-2 border-slate-300 rounded">
+            {/* Store Layout with floor plan image */}
+            <div className="relative w-full h-full border-2 border-slate-300 rounded overflow-hidden">
+              <img
+                src="/floor_plan.png"
+                alt="Store Floor Plan"
+                className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+                style={{ zIndex: 0 }}
+              />
+
               {/* Entrance */}
               <div 
                 className="absolute flex items-center justify-center bg-green-500 text-white rounded p-2 transform -translate-x-1/2 -translate-y-1/2"
@@ -112,16 +119,6 @@ const StoreMap = () => {
                   </div>
                 </div>
               ))}
-
-              {/* Path lines (decorative) */}
-              <svg className="absolute inset-0 w-full h-full pointer-events-none">
-                <defs>
-                  <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
-                    <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#e2e8f0" strokeWidth="1" opacity="0.3"/>
-                  </pattern>
-                </defs>
-                <rect width="100%" height="100%" fill="url(#grid)" />
-              </svg>
             </div>
           </div>
 
