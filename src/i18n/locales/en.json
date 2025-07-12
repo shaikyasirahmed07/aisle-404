@@ -14,7 +14,8 @@
     "success": "Success",
     "welcome": "Welcome",
     "selectLanguage": "Select your language",
-    "selectYourLanguage": "Please select your preferred language"
+    "selectYourLanguage": "Please select your preferred language",
+    "viewAll": "View All"
   },
   "auth": {
     "loginTitle": "Login to QR Retail",
@@ -125,7 +126,9 @@
     "onPromotion": "On Promotion",
     "availability": "Availability",
     "inStock": "in stock",
-    "outOfStock": "Out of stock"
+    "outOfStock": "Out of stock",
+    "details": "Product Details",
+    "aisle": "Aisle"
   },
   "navigation": {
     "home": "Home",
@@ -142,5 +145,71 @@
     "qrGenerated": "QR code generated successfully",
     "cartUpdated": "Cart updated",
     "budgetAlert": "Budget alert: {{percentage}}% of {{amount}} reached"
+  },
+  "addToCart": "Add to Cart",
+  "takeMeThere": "Take me there",
+  "inStock": "{count} in stock",
+  "outOfStock": "Out of stock",
+  "saveAmount": "You save ₹{amount}",
+  "search": {
+    "title": "Product Search",
+    "description": "Find products and their locations in the store",
+    "results": "Search Results",
+    "placeholder": "Search for products... (e.g., toothpaste, milk, bread)",
+    "filters": "Filters",
+    "category": "Category",
+    "allCategories": "All Categories",
+    "sortBy": "Sort by",
+    "sortName": "Name A-Z",
+    "sortPriceLow": "Price: Low to High",
+    "sortPriceHigh": "Price: High to Low",
+    "sortRating": "Highest Rated",
+    "sortDiscount": "Best Discount",
+    "search": "Search",
+    "popularSearches": "Popular Searches",
+    "tips": {
+      "title": "Search Tips",
+      "navigation": {
+        "title": "Quick Navigation",
+        "description": "Use \"Take me there\" to get directions to any product location"
+      },
+      "aisle": {
+        "title": "Aisle Information",
+        "description": "Each product shows its exact aisle location for easy finding"
+      },
+      "filters": {
+        "title": "Smart Filters",
+        "description": "Filter by category, price, rating, or discount to find exactly what you need"
+      }
+    }
+  },
+  "store": {
+    "aisleDirectory": "Aisle Directory",
+    "storeMapNavigation": "Store Map & Navigation",
+    "findYourWay": "Find your way around the store with our interactive map"
+  },
+  "qr": {
+    "cameraScanner": "Camera Scanner",
+    "scanWithoutSignin": "Scan without signing in",
+    "scanWithoutSigninDesc": "You can scan products without signing in. For personalized features, please sign in.",
+    "recentlyScanned": "Recently Scanned",
+    "enterProductId": "Enter product ID or scan QR code"
+  },
+  "cart": {
+    "virtualCart": "Virtual Cart",
+    "reviewYourItems": "Review your items before checkout",
+    "editBudget": "Edit Budget",
+    "cartItems": "Cart Items",
+    "emptyCartMessage": "Your cart is empty.",
+    "startScanning": "Start scanning products to add them to your cart.",
+    "shoppingTips": "Shopping Tips",
+    "budgetManagement": "Budget Management",
+    "budgetManagementDesc": "Set and track your shopping budget to avoid overspending.",
+    "virtualCartTip": "Virtual Cart",
+    "virtualCartTipDesc": "Easily manage your items before checkout.",
+    "budgetTracker": "Budget Tracker",
+    "current": "Current",
+    "withinBudget": "Within Budget",
+    "budget": "Budget"
   }
 }

@@ -14,7 +14,8 @@
     "success": "यशस्वी",
     "welcome": "स्वागत",
     "selectLanguage": "तुमची भाषा निवडा",
-    "selectYourLanguage": "कृपया तुमची प्राधान्य भाषा निवडा"
+    "selectYourLanguage": "कृपया तुमची प्राधान्य भाषा निवडा",
+    "viewAll": "सर्व पहा"
   },
   "auth": {
     "loginTitle": "QR रिटेलमध्ये लॉगिन करा",
@@ -104,7 +105,10 @@
     "productScanned": "प्रॉडक्ट स्कॅन केले!",
     "budgetReached": "बजेट अलर्ट!",
     "budgetReachedDescription": "तुम्ही तुमच्या बजेटच्या (₹{{amount}}) {{percentage}}% पोहोचलात",
-    "items": "वस्तू"
+    "items": "वस्तू",
+    "smartShopping": "स्मार्ट शॉपिंग अनुभव",
+    "scanDescription": "प्रॉडक्ट QR कोड स्कॅन करा, तपशीलवार माहिती मिळवा आणि व्हर्च्युअल कार्टमध्ये वस्तू जोडा",
+    "scan": "स्कॅन"
   },
   "product": {
     "name": "प्रॉडक्ट नाव",
@@ -117,7 +121,9 @@
     "batch": "बॅच नंबर",
     "expiry": "एक्स्पायरी डेट",
     "ecoFriendly": "पर्यावरण स्नेही",
-    "onPromotion": "प्रमोशनवर"
+    "onPromotion": "प्रमोशनवर",
+    "details": "उत्पादन तपशील",
+    "aisle": "आइल"
   },
   "navigation": {
     "home": "होम",
@@ -134,5 +140,56 @@
     "qrGenerated": "QR कोड यशस्वीरित्या जनरेट केला",
     "cartUpdated": "कार्ट अपडेट केला",
     "budgetAlert": "बजेट अलर्ट: {{amount}} चे {{percentage}}% पोहोचले"
+  },
+  "qr": {
+    "cameraScanner": "कॅमेरा स्कॅनर",
+    "scanWithoutSignin": "साइन इन न करता स्कॅन करा",
+    "scanWithoutSigninDesc": "आपण साइन इन न करता उत्पादने स्कॅन करू शकता. वैयक्तिक वैशिष्ट्यांसाठी कृपया साइन इन करा.",
+    "recentlyScanned": "अलीकडे स्कॅन केलेले",
+    "enterProductId": "प्रॉडक्ट आयडी प्रविष्ट करा किंवा QR कोड स्कॅन करा"
+  },
+  "search": {
+    "search": "शोधा",
+    "popularSearches": "लोकप्रिय शोध",
+    "title": "प्रॉडक्ट शोध",
+    "description": "स्टोअरमध्ये प्रॉडक्ट्स आणि त्यांची ठिकाणे शोधा",
+    "results": "शोध परिणाम",
+    "tips": {
+      "title": "शोध टिप्स",
+      "navigation": {
+        "title": "त्वरित नेव्हिगेशन",
+        "description": "\"मला तिथे घेऊन जा\" वापरून कोणत्याही उत्पादनाच्या स्थानावर जा"
+      },
+      "aisle": {
+        "title": "आइल माहिती",
+        "description": "प्रत्येक उत्पादन त्याचे अचूक आइल स्थान दर्शवते"
+      },
+      "filters": {
+        "title": "स्मार्ट फिल्टर",
+        "description": "श्रेणी, किंमत, रेटिंग किंवा सूट नुसार फिल्टर करा"
+      }
+    }
+  },
+  "store": {
+    "aisleDirectory": "आइल निर्देशिका",
+    "storeMapNavigation": "स्टोअर नकाशा आणि नेव्हिगेशन",
+    "findYourWay": "आमच्या इंटरएक्टिव्ह नकाशासह स्टोअरमध्ये आपला मार्ग शोधा"
+  },
+  "cart": {
+    "virtualCart": "व्हर्च्युअल कार्ट",
+    "reviewYourItems": "चेकआउटपूर्वी आपल्या वस्तूंची समीक्षा करा",
+    "editBudget": "बजेट संपादित करा",
+    "cartItems": "कार्ट वस्तू",
+    "emptyCartMessage": "आपली कार्ट रिकामी आहे.",
+    "startScanning": "कार्टमध्ये जोडण्यासाठी उत्पादने स्कॅन करा.",
+    "shoppingTips": "शॉपिंग टिप्स",
+    "budgetManagement": "बजेट व्यवस्थापन",
+    "budgetManagementDesc": "अधिक खर्च टाळण्यासाठी बजेट सेट करा आणि ट्रॅक करा.",
+    "virtualCartTip": "व्हर्च्युअल कार्ट",
+    "virtualCartTipDesc": "चेकआउटपूर्वी वस्तू सहजपणे व्यवस्थापित करा.",
+    "budgetTracker": "बजेट ट्रॅकर",
+    "current": "सध्याचा",
+    "withinBudget": "बजेटमध्ये आहे",
+    "budget": "बजेट"
   }
 }

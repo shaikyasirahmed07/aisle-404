@@ -14,7 +14,8 @@
     "success": "সফল",
     "welcome": "স্বাগতম",
     "selectLanguage": "আপনার ভাষা নির্বাচন করুন",
-    "selectYourLanguage": "অনুগ্রহ করে আপনার পছন্দের ভাষা নির্বাচন করুন"
+    "selectYourLanguage": "অনুগ্রহ করে আপনার পছন্দের ভাষা নির্বাচন করুন",
+    "viewAll": "সব দেখুন"
   },
   "auth": {
     "loginTitle": "QR রিটেইলে লগইন করুন",
@@ -104,7 +105,10 @@
     "productScanned": "পণ্য স্ক্যান করা হয়েছে!",
     "budgetReached": "বাজেট অ্যালার্ট!",
     "budgetReachedDescription": "আপনি আপনার বাজেটের (₹{{amount}}) {{percentage}}% পৌঁছেছেন",
-    "items": "আইটেম"
+    "items": "আইটেম",
+    "smartShopping": "স্মার্ট শপিং অভিজ্ঞতা",
+    "scanDescription": "পণ্যের QR কোড স্ক্যান করুন, বিস্তারিত তথ্য পান এবং ভার্চুয়াল কার্টে আইটেম যোগ করুন",
+    "scan": "স্ক্যান"
   },
   "product": {
     "name": "পণ্যের নাম",
@@ -117,7 +121,9 @@
     "batch": "ব্যাচ নম্বর",
     "expiry": "মেয়াদ শেষের তারিখ",
     "ecoFriendly": "পরিবেশ বান্ধব",
-    "onPromotion": "প্রমোশনে"
+    "onPromotion": "প্রমোশনে",
+    "details": "পণ্যের বিবরণ",
+    "aisle": "আইল"
   },
   "navigation": {
     "home": "হোম",
@@ -134,5 +140,56 @@
     "qrGenerated": "QR কোড সফলভাবে তৈরি করা হয়েছে",
     "cartUpdated": "কার্ট আপডেট করা হয়েছে",
     "budgetAlert": "বাজেট অ্যালার্ট: {{amount}} এর {{percentage}}% পৌঁছেছে"
+  },
+  "qr": {
+    "cameraScanner": "ক্যামেরা স্ক্যানার",
+    "scanWithoutSignin": "সাইন ইন ছাড়াই স্ক্যান করুন",
+    "scanWithoutSigninDesc": "আপনি সাইন ইন ছাড়াই পণ্য স্ক্যান করতে পারেন। ব্যক্তিগত ফিচারের জন্য সাইন ইন করুন।",
+    "recentlyScanned": "সম্প্রতি স্ক্যান করা হয়েছে",
+    "enterProductId": "পণ্যের আইডি লিখুন অথবা QR কোড স্ক্যান করুন"
+  },
+  "cart": {
+    "virtualCart": "ভার্চুয়াল কার্ট",
+    "reviewYourItems": "চেকআউটের আগে আপনার আইটেমগুলি পর্যালোচনা করুন",
+    "editBudget": "বাজেট সম্পাদনা করুন",
+    "cartItems": "কার্ট আইটেম",
+    "emptyCartMessage": "আপনার কার্ট খালি।",
+    "startScanning": "কার্টে যোগ করতে পণ্য স্ক্যান করুন।",
+    "shoppingTips": "শপিং টিপস",
+    "budgetManagement": "বাজেট ব্যবস্থাপনা",
+    "budgetManagementDesc": "অতিরিক্ত খরচ এড়াতে বাজেট সেট করুন এবং ট্র্যাক করুন।",
+    "virtualCartTip": "ভার্চুয়াল কার্ট",
+    "virtualCartTipDesc": "চেকআউটের আগে সহজেই আইটেমগুলি পরিচালনা করুন।",
+    "budgetTracker": "বাজেট ট্র্যাকার",
+    "current": "বর্তমান",
+    "withinBudget": "বাজেটের মধ্যে",
+    "budget": "বাজেট"
+  },
+  "search": {
+    "search": "অনুসন্ধান করুন",
+    "popularSearches": "জনপ্রিয় অনুসন্ধান",
+    "title": "পণ্য অনুসন্ধান",
+    "description": "স্টোরে পণ্য এবং তাদের অবস্থান খুঁজুন",
+    "results": "অনুসন্ধান ফলাফল",
+    "tips": {
+      "title": "অনুসন্ধান টিপস",
+      "navigation": {
+        "title": "দ্রুত নেভিগেশন",
+        "description": "\"আমাকে সেখানে নিয়ে যাও\" ব্যবহার করে যেকোনো পণ্যের অবস্থানে যান"
+      },
+      "aisle": {
+        "title": "আইল তথ্য",
+        "description": "প্রতিটি পণ্য তার সঠিক আইল অবস্থান দেখায়"
+      },
+      "filters": {
+        "title": "স্মার্ট ফিল্টার",
+        "description": "বিভাগ, মূল্য, রেটিং বা ছাড় অনুযায়ী ফিল্টার করুন"
+      }
+    }
+  },
+  "store": {
+    "aisleDirectory": "আইল ডিরেক্টরি",
+    "storeMapNavigation": "স্টোর ম্যাপ ও নেভিগেশন",
+    "findYourWay": "আমাদের ইন্টারেক্টিভ ম্যাপ দিয়ে স্টোরে আপনার পথ খুঁজে নিন"
   }
 }

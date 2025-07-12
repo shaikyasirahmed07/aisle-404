@@ -14,7 +14,8 @@
     "success": "کامیابی",
     "welcome": "خوش آمدید",
     "selectLanguage": "اپنی زبان منتخب کریں",
-    "selectYourLanguage": "براہ کرم اپنی پسندیدہ زبان منتخب کریں"
+    "selectYourLanguage": "براہ کرم اپنی پسندیدہ زبان منتخب کریں",
+    "viewAll": "سب دیکھیں"
   },
   "auth": {
     "loginTitle": "QR ریٹیل میں لاگ ان کریں",
@@ -104,7 +105,10 @@
     "productScanned": "پروڈکٹ اسکین کیا گیا!",
     "budgetReached": "بجٹ الرٹ!",
     "budgetReachedDescription": "آپ نے اپنے بجٹ (₹{{amount}}) کا {{percentage}}% پہنچ گیا ہے",
-    "items": "آئٹمز"
+    "items": "آئٹمز",
+    "smartShopping": "سمارٹ شاپنگ تجربہ",
+    "scanDescription": "پروڈکٹ کے QR کوڈ اسکین کریں، تفصیلی معلومات حاصل کریں اور ورچوئل کارٹ میں آئٹمز شامل کریں",
+    "scan": "اسکین"
   },
   "product": {
     "name": "پروڈکٹ کا نام",
@@ -117,7 +121,9 @@
     "batch": "بیچ نمبر",
     "expiry": "میعاد ختم ہونے کی تاریخ",
     "ecoFriendly": "ماحول دوست",
-    "onPromotion": "پروموشن پر"
+    "onPromotion": "پروموشن پر",
+    "details": "پروڈکٹ کی تفصیلات",
+    "aisle": "اسٹور آئل"
   },
   "navigation": {
     "home": "ہوم",
@@ -134,5 +140,56 @@
     "qrGenerated": "QR کوڈ کامیابی سے جنریٹ کیا گیا",
     "cartUpdated": "کارٹ اپ ڈیٹ کیا گیا",
     "budgetAlert": "بجٹ الرٹ: {{amount}} کا {{percentage}}% پہنچ گیا"
+  },
+  "qr": {
+    "cameraScanner": "کیمرہ اسکینر",
+    "scanWithoutSignin": "سائن ان کیے بغیر اسکین کریں",
+    "scanWithoutSigninDesc": "آپ سائن ان کیے بغیر مصنوعات اسکین کر سکتے ہیں۔ ذاتی خصوصیات کے لیے براہ کرم سائن ان کریں۔",
+    "recentlyScanned": "حال ہی میں اسکین شدہ",
+    "enterProductId": "پروڈکٹ ID درج کریں یا QR کوڈ اسکین کریں"
+  },
+  "cart": {
+    "virtualCart": "ورچوئل کارٹ",
+    "reviewYourItems": "چیک آؤٹ سے پہلے اپنی آئٹمز کا جائزہ لیں",
+    "editBudget": "بجٹ میں ترمیم کریں",
+    "cartItems": "کارٹ آئٹمز",
+    "emptyCartMessage": "آپ کی کارٹ خالی ہے۔",
+    "startScanning": "کارٹ میں شامل کرنے کے لیے مصنوعات اسکین کریں۔",
+    "shoppingTips": "شاپنگ ٹپس",
+    "budgetManagement": "بجٹ مینجمنٹ",
+    "budgetManagementDesc": "زیادہ خرچ سے بچنے کے لیے بجٹ سیٹ اور ٹریک کریں۔",
+    "virtualCartTip": "ورچوئل کارٹ",
+    "virtualCartTipDesc": "چیک آؤٹ سے پہلے آئٹمز کو آسانی سے منظم کریں۔",
+    "budgetTracker": "بجٹ ٹریکر",
+    "current": "موجودہ",
+    "withinBudget": "بجٹ کے اندر",
+    "budget": "بجٹ"
+  },
+  "search": {
+    "search": "تلاش کریں",
+    "popularSearches": "مقبول تلاشیں",
+    "title": "پروڈکٹ تلاش",
+    "description": "اسٹور میں پروڈکٹس اور ان کے مقامات تلاش کریں",
+    "results": "تلاش کے نتائج",
+    "tips": {
+      "title": "تلاش کے مشورے",
+      "navigation": {
+        "title": "فوری نیویگیشن",
+        "description": "\"مجھے وہاں لے چلو\" استعمال کریں تاکہ کسی بھی پروڈکٹ کے مقام تک پہنچ سکیں"
+      },
+      "aisle": {
+        "title": "آئل معلومات",
+        "description": "ہر پروڈکٹ اس کا درست آئل مقام دکھاتا ہے"
+      },
+      "filters": {
+        "title": "سمارٹ فلٹرز",
+        "description": "قسم، قیمت، ریٹنگ یا چھوٹ کے مطابق فلٹر کریں"
+      }
+    }
+  },
+  "store": {
+    "aisleDirectory": "آئل ڈائریکٹری",
+    "storeMapNavigation": "اسٹور میپ اور نیویگیشن",
+    "findYourWay": "انٹرایکٹو میپ کے ساتھ اسٹور میں اپنا راستہ تلاش کریں"
   }
 }
