@@ -9,9 +9,38 @@ import ProductCard from './ProductCard';
 import { fetchAllProducts, searchProducts } from '@/services/productService';
 import { useToast } from '@/hooks/use-toast';
 
+interface Product {
+  id: string;
+  productId: string;
+  name: string;
+  category: string;
+  price: number;
+  mrp: number;
+  discount: number;
+  rating: number;
+  batchNumber: string;
+  expiryDate: string;
+  aisleLocation: string;
+  location: string;
+  stock: number;
+  stockCount: number;
+  description: string;
+  imageUrl: string;
+  brand: string;
+  manufacturer: string;
+  weight: string;
+  dimensions: string;
+  tags: string[];
+  isAvailable: boolean;
+  isFeatured: boolean;
+  createdAt: string;
+  updatedAt: string;
+  // Add other fields as needed
+}
+
 interface ProductSearchProps {
-  onAddToCart: (product: any) => void;
-  t: (key: string, options?: any) => string;
+  onAddToCart: (product: Product) => void;
+  t: (key: string, options?: Record<string, unknown>) => string;
 }
 
 const ProductSearch: React.FC<ProductSearchProps> = ({ onAddToCart, t }) => {
@@ -19,7 +48,7 @@ const ProductSearch: React.FC<ProductSearchProps> = ({ onAddToCart, t }) => {
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [sortBy, setSortBy] = useState('name');
   const [showFilters, setShowFilters] = useState(false);
-  const [products, setProducts] = useState<any[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
@@ -40,10 +69,38 @@ const ProductSearch: React.FC<ProductSearchProps> = ({ onAddToCart, t }) => {
     setLoading(true);
     try {
       const allProducts = await fetchAllProducts();
-      setProducts(allProducts);
+      // Ensure all required Product fields are present
+      const normalizedProducts: Product[] = allProducts.map((p: any) => ({
+        id: p.id,
+        productId: p.productId,
+        name: p.name,
+        category: p.category,
+        price: p.price,
+        mrp: p.mrp,
+        discount: p.discount,
+        rating: p.rating ?? 0,
+        batchNumber: p.batchNumber ?? '',
+        expiryDate: p.expiryDate ?? '',
+        aisleLocation: p.aisleLocation ?? '',
+        location: p.location ?? '',
+        stock: p.stock ?? 0,
+        stockCount: p.stockCount ?? 0,
+        description: p.description ?? '',
+        imageUrl: p.imageUrl ?? '',
+        brand: p.brand ?? '',
+        manufacturer: p.manufacturer ?? '',
+        weight: p.weight ?? '',
+        dimensions: p.dimensions ?? '',
+        tags: p.tags ?? [],
+        isAvailable: p.isAvailable ?? true,
+        isFeatured: p.isFeatured ?? false,
+        createdAt: p.createdAt ?? '',
+        updatedAt: p.updatedAt ?? '',
+      }));
+      setProducts(normalizedProducts);
       
       // Extract unique categories
-      const uniqueCategories = Array.from(new Set(allProducts.map(p => p.category)));
+      const uniqueCategories = Array.from(new Set(normalizedProducts.map(p => p.category)));
       setCategories(uniqueCategories);
     } catch (error) {
       console.error('Failed to load products:', error);

@@ -1,13 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Star, MapPin, ShoppingCart, ArrowLeft, Phone, Heart, MessageCircle, Share2 } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
-import { toast } from '@/hooks/use-toast';
-import { Input } from '@/components/ui/input';
-import { useTranslation } from 'react-i18next';
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  Star,
+  MapPin,
+  ShoppingCart,
+  ArrowLeft,
+  Phone,
+  Heart,
+  MessageCircle,
+  Share2,
+} from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
+import { Input } from "@/components/ui/input";
+import { useTranslation } from "react-i18next";
+import oliveImage from "../assets/olive.jpeg"; // Adjust the path as necessary
+
 
 interface Product {
   productid: string;
@@ -28,10 +39,10 @@ const ProductPage = () => {
   const { productId } = useParams();
   const navigate = useNavigate();
   const { t } = useTranslation();
-  
+
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [showPhoneInput, setShowPhoneInput] = useState(false);
   const [liked, setLiked] = useState(false);
 
@@ -45,15 +56,15 @@ const ProductPage = () => {
   const fetchProduct = async () => {
     try {
       const { data, error } = await supabase
-        .from('products')
-        .select('*')
-        .eq('productid', productId)
+        .from("products")
+        .select("*")
+        .eq("productid", productId)
         .single();
 
       if (error) throw error;
       setProduct(data);
     } catch (error) {
-      console.error('Error fetching product:', error);
+      console.error("Error fetching product:", error);
       toast({
         title: t("product.notFound"),
         description: t("product.scannedProductNotFound"),
@@ -68,22 +79,22 @@ const ProductPage = () => {
     try {
       if (productId) {
         const { data, error } = await supabase
-          .from('products')
-          .select('viewcount')
-          .eq('productid', productId)
+          .from("products")
+          .select("viewcount")
+          .eq("productid", productId)
           .single();
 
         if (error) throw error;
 
         const newViewCount = (data.viewcount || 0) + 1;
-        
+
         await supabase
-          .from('products')
+          .from("products")
           .update({ viewcount: newViewCount })
-          .eq('productid', productId);
+          .eq("productid", productId);
       }
     } catch (error) {
-      console.error('Error updating view count:', error);
+      console.error("Error updating view count:", error);
     }
   };
 
@@ -115,11 +126,11 @@ const ProductPage = () => {
       if (product) {
         // Update cart count in database
         const { error: cartError } = await supabase
-          .from('products')
-          .update({ 
-            cartaddcount: (product.cartaddcount || 0) + 1 
+          .from("products")
+          .update({
+            cartaddcount: (product.cartaddcount || 0) + 1,
           })
-          .eq('productid', productId);
+          .eq("productid", productId);
 
         if (cartError) throw cartError;
 
@@ -133,7 +144,7 @@ const ProductPage = () => {
         setShowPhoneInput(false);
       }
     } catch (error) {
-      console.error('Error adding to cart:', error);
+      console.error("Error adding to cart:", error);
       toast({
         title: t("cart.addToCartError"),
         description: t("cart.tryAgain"),
@@ -162,7 +173,9 @@ const ProductPage = () => {
       <div className="min-h-screen p-6 flex flex-col justify-center items-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-2">{t("product.notFound")}</h1>
-          <p className="text-muted-foreground mb-6">{t("product.scannedProductNotFound")}</p>
+          <p className="text-muted-foreground mb-6">
+            {t("product.scannedProductNotFound")}
+          </p>
           <Button onClick={handleGoBack}>
             <ArrowLeft className="w-4 h-4 mr-2" />
             {t("common.goBack")}
@@ -189,7 +202,9 @@ const ProductPage = () => {
           {product.name}
         </h1>
         <Button variant="ghost" size="sm" onClick={() => setLiked(!liked)}>
-          <Heart className={`w-5 h-5 ${liked ? 'fill-red-500 text-red-500' : ''}`} />
+          <Heart
+            className={`w-5 h-5 ${liked ? "fill-red-500 text-red-500" : ""}`}
+          />
         </Button>
       </div>
 
@@ -197,11 +212,25 @@ const ProductPage = () => {
         {/* Product Main Card */}
         <Card className="mb-6 overflow-hidden">
           {/* Product Image */}
-          <div className="h-64 bg-muted flex items-center justify-center">
+          {/* <div className="h-64 bg-muted flex items-center justify-center">
             <div className="w-40 h-40 bg-white/80 rounded-lg flex items-center justify-center p-4">
-              <span className="text-xl font-medium text-gray-500">{product.name}</span>
+              <img
+                src={qrAndroid}
+                alt={product.name}
+                className="max-w-full max-h-full object-contain"
+              />
             </div>
-          </div>
+          </div> */}
+          <div className="h-64 bg-muted flex items-center justify-center">
+  <div className="w-190 h-60 bg-white/80 rounded-lg overflow-hidden p-0">
+    <img
+      src={oliveImage}
+      alt={product.name}
+      className="w-full h-full object-cover"
+    />
+  </div>
+</div>
+
 
           <CardContent className="p-6">
             <div className="flex flex-col space-y-4">
@@ -221,12 +250,19 @@ const ProductPage = () => {
 
               {/* Pricing */}
               <div className="flex items-center space-x-3">
-                <span className="text-3xl font-bold text-primary">₹{product.price}</span>
+                <span className="text-3xl font-bold text-primary">
+                  ₹{product.price}
+                </span>
                 {product.discount > 0 && (
                   <>
-                    <span className="text-xl text-muted-foreground line-through">₹{product.mrp}</span>
-                    <Badge variant="secondary" className="bg-green-100 text-green-700">
-                      {product.discount}% {t('product.off')}
+                    <span className="text-xl text-muted-foreground line-through">
+                      ₹{product.mrp}
+                    </span>
+                    <Badge
+                      variant="secondary"
+                      className="bg-green-100 text-green-700"
+                    >
+                      {product.discount}% {t("product.off")}
                     </Badge>
                   </>
                 )}
@@ -237,47 +273,47 @@ const ProductPage = () => {
                 <div className="flex items-center">
                   <div className="flex">
                     {[...Array(5)].map((_, i) => (
-                      <Star 
-                        key={i} 
+                      <Star
+                        key={i}
                         className={`w-4 h-4 ${
                           i < 4 // Mock 4-star rating
-                            ? 'text-yellow-400 fill-current' 
-                            : 'text-gray-300'
-                        }`} 
+                            ? "text-yellow-400 fill-current"
+                            : "text-gray-300"
+                        }`}
                       />
                     ))}
                   </div>
                   <span className="text-sm font-medium ml-1">4.0</span>
                 </div>
-                
+
                 <div className="flex items-center">
                   <Heart className="w-4 h-4 text-gray-500 mr-1" />
                   <span className="text-sm">{formattedLikes}</span>
                 </div>
-                
+
                 <div className="flex items-center">
                   <MessageCircle className="w-4 h-4 text-gray-500 mr-1" />
                   <span className="text-sm">{comments}</span>
                 </div>
-                
+
                 <div className="flex items-center">
                   <Share2 className="w-4 h-4 text-gray-500 mr-1" />
-                  <span className="text-sm">{t('product.share')}</span>
+                  <span className="text-sm">{t("product.share")}</span>
                 </div>
               </div>
 
               {/* Stock Status */}
               <div>
                 <div className="flex justify-between">
-                  <span className="text-sm">{t('product.availability')}</span>
+                  <span className="text-sm">{t("product.availability")}</span>
                   <span className="text-sm font-medium">
-                    {product.stockcount > 0 
-                      ? `${product.stockcount} ${t('product.inStock')}` 
-                      : t('product.outOfStock')}
+                    {product.stockcount > 0
+                      ? `${product.stockcount} ${t("product.inStock")}`
+                      : t("product.outOfStock")}
                   </span>
                 </div>
                 <div className="flex justify-between mt-1">
-                  <span className="text-sm">{t('product.expiry')}</span>
+                  <span className="text-sm">{t("product.expiry")}</span>
                   <span className="text-sm font-medium">
                     {product.expirydate
                       ? new Date(product.expirydate).toLocaleDateString()
@@ -289,8 +325,12 @@ const ProductPage = () => {
               {/* Description */}
               {product.description && (
                 <div className="border-t pt-4">
-                  <h3 className="font-medium mb-2">{t('product.description')}</h3>
-                  <p className="text-muted-foreground text-sm">{product.description}</p>
+                  <h3 className="font-medium mb-2">
+                    {t("product.description")}
+                  </h3>
+                  <p className="text-muted-foreground text-sm">
+                    {product.description}
+                  </p>
                 </div>
               )}
 
@@ -298,7 +338,7 @@ const ProductPage = () => {
               {showPhoneInput && (
                 <div className="border-t pt-4 space-y-3">
                   <label htmlFor="phone-input" className="text-sm font-medium">
-                    {t('cart.enterPhoneForCart')}
+                    {t("cart.enterPhoneForCart")}
                   </label>
                   <div className="flex space-x-2">
                     <Input
@@ -310,22 +350,25 @@ const ProductPage = () => {
                       maxLength={10}
                       className="flex-1"
                     />
-                    <Button variant="outline" onClick={() => setShowPhoneInput(false)}>
-                      {t('common.cancel')}
+                    <Button
+                      variant="outline"
+                      onClick={() => setShowPhoneInput(false)}
+                    >
+                      {t("common.cancel")}
                     </Button>
                   </div>
                 </div>
               )}
 
               {/* Add to Cart Button */}
-              <Button 
-                className="w-full mt-4 bg-primary text-white" 
+              <Button
+                className="w-full mt-4 bg-primary text-white"
                 size="lg"
                 onClick={handleAddToCart}
                 disabled={product.stockcount <= 0}
               >
                 <ShoppingCart className="w-5 h-5 mr-2" />
-                {t('customer.addToCart')}
+                {t("customer.addToCart")}
               </Button>
             </div>
           </CardContent>
